@@ -1,0 +1,7 @@
+{% for i in varimage %}
+<figure id="demmo" class="border-radius-0">
+    <a class="popup-image" href="{{i.images.url}}">
+        <img id="demo" src="{{i.images.url}}" alt="product image" loading="eager" />
+    </a>
+</figure>
+{% endfor %}

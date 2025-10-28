@@ -1,0 +1,61 @@
+{% extends 'partials/base.html' %}
+{% block title %}Shop profile{% endblock title %}
+{% block content %}
+{% include 'alerts/alert.html' %}
+{% include 'vendor_cover.html' %}
+  <div class="container-fluid">
+    <div class="row">
+      {% include 'vendor_sidebar.html' %}
+      <div class="col-md-9">
+        <div class="container my-0">
+          <h3 class="fw-normal"><b>Manage your profile</b></h3><hr>
+          <form autocomplete="on" class="col-md-8" enctype="multipart/form-data" method="POST"> {% csrf_token %}
+            <div class="text-center">
+              <img src="{{ about.profile_image.url }}" alt="profile image" width="30%" class="rounded-pill"><br>
+              <small style="font-size: 12px;">Profile image<span class="text-danger">*</span></small>
+              <div class="form-floating">{{ about_form.profile_image }}</div>
+              {% for error in about_form.profile_image.errors %}
+                <span class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill" style="list-style-type: none;" class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div><hr>
+            <div class="text-center">
+              <img src="{{ about.cover_image.url }}" alt="cover image" width="80%" class="rounded"><br>
+              <small style="font-size: 12px;">Cover image<span class="text-danger">*</span></small>
+              <div class="form-floating">{{ about_form.cover_image }}</div>
+              {% for error in about_form.cover_image.errors %}
+                <span class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill" style="list-style-type: none;" class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div><hr>
+            <div class="text-center">
+              <img src="{{ vendor.license.url }}" alt="license" width="60%" class="rounded"><br>
+              <small style="font-size: 12px;">License<span class="text-danger">*</span></small>
+              <div class="form-floating">{{ vendor_form.license }}</div>
+              {% for error in vendor_form.license.errors %}
+                <span class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill" style="list-style-type: none;" class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div><hr>
+            <div class="form-floating">{{ vendor_form.name }}<label for="id_name">vendor name<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.address }}<label for="id_address">address<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.shipping_on_time }}<label for="id_address">Shipping time<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.chat_resp_time }}<label for="id_address">Chat response<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.facebook_url }}<label for="id_address">Facebook url<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.instagram_url }}<label for="id_address">Instagrm url<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.twitter_url }}<label for="id_address">Twitter url<span class="text-danger">*</span></label></div>
+            <div class="form-floating">{{ about_form.linkedin_url }}<label for="id_address">LinkedIn url<span class="text-danger">*</span></label></div>
+            <div class="text-center my-5"><input class="btn btn-dark rounded-pill" type="submit" value="Update"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if vendor_form.errors %}
+  <div class="alert alert-danger text-center border pt-20 pb-20 pl-20 pr-20">
+      <h6>{{vendor_form.errors}}</h6>
+  </div>
+  {% endif %}
+  {% if about_form.errors %}
+  <div class="alert alert-danger text-center border pt-20 pb-20 pl-20 pr-20">
+      <h6>{{about_form.errors}}</h6>
+  </div>
+  {% endif %}
+{% endblock content %}

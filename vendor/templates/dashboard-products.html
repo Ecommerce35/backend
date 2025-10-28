@@ -1,0 +1,89 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}            
+  <div class="container page-wrapper">
+    <div class="mb-4">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col col-check flex-grow-0">
+                    <div class="form-check ms-2">
+                        <input class="form-check-input" type="checkbox" value="" />
+                    </div>
+                </div>
+                <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                    <select class="form-select">
+                        <option selected>All category</option>
+                        <option>Electronics</option>
+                        <option>Clothes</option>
+                        <option>Automobile</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-6">
+                    <input type="date" value="02.05.2021" class="form-control" />
+                </div>
+                <div class="col-md-2 col-6">
+                    <select class="form-select">
+                        <option selected>Status</option>
+                        <option>Active</option>
+                        <option>Disabled</option>
+                        <option>Show all</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        <!-- card-header end// -->
+
+        
+        <div class="card-body">
+          
+                
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for p in all_products %}
+                    <tr>
+                      <td colspan="">
+                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+                            <a class="itemside" href="{% url 'core:product-detail' p.pid %}">
+                                <div class="left">
+                                    <img src="{{p.image.url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 15px;" class="img-sm img-thumbnail" alt="Item" />
+                                </div>
+                                <div class="info">
+                                    <h6 class="mb-0">{{p.title}}</h6>
+                                </div>
+                            </a>
+                        </div>
+                      </td>
+                      <td >₵{{p.price}}</td>
+                      <td >{{p.product_status|title}}</td>
+                      <td>{{p.date}}</td>
+                      <td>
+                        <div class="">
+                            <a href="{% url 'useradmin:dashboard-edit-products'  p.pid %}" class="btn btn-sm font-sm rounded btn-brand"> <i class="material-icons md-edit"></i> Edit </a>
+                            <a href="{% url 'useradmin:dashboard-delete-products' p.pid  %}" class="btn btn-danger"> <i class="material-icons md-delete_forever"></i> Delete </a>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+
+            
+        </div>
+        <!-- card-body end// -->
+    </div>
+  </div>
+ 
+{% endblock %}

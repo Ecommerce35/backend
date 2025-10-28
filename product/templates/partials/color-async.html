@@ -1,0 +1,49 @@
+<div id="ajax_gallery" class="product-gallery product-gallery-vertical">
+    <div class="row">
+        {% if variant %}
+        <figure class="product-main-image">
+            <img id="product-zoom" src="{{variant.image.url}}" data-zoom-image="{{variant.image.url}}" alt="product image">
+
+            <a href="#" id="btn-product-gallery" class="btn-product-gallery">
+                <i class="icon-arrows"></i>
+            </a>
+        </figure><!-- End .product-main-image -->
+        {% else %}
+        <figure class="product-main-image">
+            <img id="product-zoom" src="{{p.image.url}}" data-zoom-image="{{p.image.url}}" alt="product image">
+
+            <a href="#" id="btn-product-gallery" class="btn-product-gallery">
+                <i class="icon-arrows"></i>
+            </a>
+        </figure><!-- End .product-main-image -->
+        {% endif %}
+
+        <div id="product-zoom-gallery" class="product-image-gallery">
+            {% if variant %}
+            <a class="product-gallery-item active" data-image="{{variant.image.url}}" data-zoom-image="{{variant.image.url}}">
+                <img src="{{variant.image.url}}" alt="product side">
+            </a>
+            {% else %}
+            <a class="product-gallery-item active" data-image="{{p.image.url}}" data-zoom-image="{{p.image.url}}">
+                <img src="{{p.image.url}}" alt="product side">
+            </a>
+            {% endif %}
+
+            {% if varimage %}
+                {% for p in varimage %}
+                <a class="product-gallery-item" data-image="{{p.images.url}}" data-zoom-image="{{p.images.url}}">
+                    <img src="{{p.images.url}}" alt="product cross">
+                </a>
+                {% endfor %}
+            {% else %}
+                {% for p in pimage %}
+                <a class="product-gallery-item" data-image="{{p.images.url}}" data-zoom-image="{{p.images.url}}">
+                    <img src="{{p.images.url}}" alt="product cross">
+                </a>
+                {% endfor %}
+            {% endif %}
+
+            </a>
+        </div><!-- End .product-image-gallery -->
+    </div><!-- End .row -->
+</div><!-- End .product-gallery -->

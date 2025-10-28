@@ -1,0 +1,214 @@
+{% extends 'partials/base.html' %}
+{% block title %}{{main_category.title|title}}{% endblock title %}
+{% load humanize %}
+{% load static %}
+{% block content  %}
+    <main class="main bg-light">
+        
+        <div class="page-header mt-30 mb-75">
+            <div class="container">
+                <div class="archive-header">
+                    <div class="row align-items-center">
+                        <div class="col-xl-3">
+                            <h1 class="mb-15">{{main_category.title|title}}</h1>
+                            <div class="breadcrumb">
+                                <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                                <span></span> {{main_category.title|title}}
+                            </div>
+                        </div>
+                        {% comment %} <div class="col-xl-9 text-end d-none d-xl-block">
+                            <ul class="tags-list">
+                                <li class="hover-up">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Shopping</a>
+                                </li>
+                                <li class="hover-up active">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Recips</a>
+                                </li>
+                                <li class="hover-up">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Kitchen</a>
+                                </li>
+                                <li class="hover-up">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>News</a>
+                                </li>
+                                <li class="hover-up mr-0">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Food</a>
+                                </li>
+                            </ul>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-content mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="shop-product-fillter mb-10 pr-30">
+                            <div class="totall-product">
+                                <h2>
+                                    ({{category.count}}) {% if category.count > 1 %}Categories {% else %} Category{% endif %}
+                                </h2><br>
+
+                                <div class="search-form mb-15">
+                                    <form action="{% url 'core:search_maincategory' %}" method="GET">
+                                        <input type="text" name="q" placeholder="Search…" required>
+                                        <button type="submit"><i class="fi-rs-search"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% comment %} <div class="sort-by-product-area">
+                                <div class="sort-by-cover mr-10">
+                                    <div class="sort-by-product-wrap">
+                                        <div class="sort-by">
+                                            <span><i class="fi-rs-apps"></i>Show:</span>
+                                        </div>
+                                        <div class="sort-by-dropdown-wrap">
+                                            <span> 50 <i class="fi-rs-angle-small-down"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="sort-by-dropdown">
+                                        <ul>
+                                            <li><a class="active" href="#">50</a></li>
+                                            <li><a href="#">100</a></li>
+                                            <li><a href="#">150</a></li>
+                                            <li><a href="#">200</a></li>
+                                            <li><a href="#">All</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="sort-by-cover">
+                                    <div class="sort-by-product-wrap">
+                                        <div class="sort-by">
+                                            <span><i class="fi-rs-apps-sort"></i>Sort:</span>
+                                        </div>
+                                        <div class="sort-by-dropdown-wrap">
+                                            <span>Featured <i class="fi-rs-angle-small-down"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="sort-by-dropdown">
+                                        <ul>
+                                            <li><a class="active" href="#">Featured</a></li>
+                                            <li><a href="#">Newest</a></li>
+                                            <li><a href="#">Most comments</a></li>
+                                            <li><a href="#">Release Date</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+                        </div>
+                        <div class="loop-grid pr-30">
+                            <div class="row">
+                                {% for c in category %}
+                                <article class="col-xxl-2 col-xl-3 col-lg-4 col-md-4 ml-15 text-center hover-up mb-10 animated shadow-sm rounded-3">
+                                    <div class="post-thumb">
+                                        <a href="{% url 'core:subcategory-list' c.cid %}">
+                                            <img class="border-radius-15" src="{{ c.image.url }}" alt="" />
+                                        </a>
+                                        <div class="entry-meta">
+                                            <a class="entry-meta meta-2">New</i></a>
+                                        </div>
+                                    </div>
+                                    <div class="entry-content-2">
+                                        <h6 class="mb-10 font-sm"><a class="entry-meta text-muted" href="{% url 'core:subcategory-list' c.cid %}">{{c.sub_category_set.all.count}} {% if c.sub_category_set.all.count > 1 %}Sub-categories {% else %}Sub-category{% endif %}</a></h6>
+                                        <h4 class="post-title mb-15">
+                                            <a href="#">{{c.title}}</a>
+                                        </h4>
+                                        <div class="entry-meta font-xs color-grey mt-10 pb-10">
+                                            <div style="color: black;">
+                                                <span class="post-on mr-10">{{c.date|date}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                        <div class="widget-area">
+                            <div class="sidebar-widget widget-category-2 mb-50">
+                                <h5 class="section-title style-1 mb-30">Category</h5>
+                                <ul>
+                                    {% for c in main_categories %}
+                                    <li>
+                                        <a href="{% url 'core:maincategory_list' c.mcid %}"> <img src="{{c.image.url}}" alt="" />{{c.title}}</a><span class="count">{{c.category_set.all.count}}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <!-- Product sidebar Widget -->
+                            <!-- Recently added -->
+                            {% if recently_added %}
+                            <!-- Product sidebar Widget -->
+                            <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey ">
+                                <h5 class="section-title style-1 mb-30">New products</h5>
+                                {% for r in recently_added %}
+                                <div class="single-post clearfix">
+                                    <div class="image">
+                                        <img src="{{r.image.url}}" alt="#" />
+                                    </div>
+                                    <div class="content pt-10">
+                                        <h5><a href="{% url 'core:product_detail' r.slug r.id r.pid %}">{{r.title|truncatechars:25}}</a></h5>
+                                        <p class="price mb-0 mt-5">₵{{r.price|floatformat:2|intcomma}}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <!-- End recently_added -->
+                            <div class="sidebar-widget widget_instagram mb-50">
+                                <h5 class="section-title style-1 mb-30">Gallery</h5>
+                                <div class="instagram-gellay">
+                                    <ul class="insta-feed">
+                                        <li>
+                                            <a href="#"><img class="border-radius-5" src="{% static 'assets/imgs/shop/thumbnail-1.jpg' %}" alt="" /></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><img class="border-radius-5" src="{% static 'assets/imgs/shop/thumbnail-2.jpg' %}" alt="" /></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><img class="border-radius-5" src="{% static 'assets/imgs/shop/thumbnail-3.jpg' %}" alt="" /></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><img class="border-radius-5" src="{% static 'assets/imgs/shop/thumbnail-4.jpg' %}" alt="" /></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><img class="border-radius-5" src="{% static 'assets/imgs/shop/thumbnail-5.jpg' %}" alt="" /></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><img class="border-radius-5" src="{% static 'assets/imgs/shop/thumbnail-6.jpg' %}" alt="" /></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!--Tags-->
+                            {% comment %} <div class="sidebar-widget widget-tags mb-50 pb-10">
+                                <h5 class="section-title style-1 mb-30">Popular Tags</h5>
+                                <ul class="tags-list">
+                                    {% for tag in tag %}
+                                    <li class="hover-up">
+                                        <a href="{% url 'core:tags' tag.slug %}"><i class="fi-rs-cross mr-10"></i>{{tag.name}}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div> {% endcomment %}
+                            <div class="banner-img wow fadeIn mb-50 animated d-lg-block d-none">
+                                <img src="{% static 'assets/imgs/banner/banner-11.png' %}" alt="" />
+                                <div class="banner-text">
+                                    <span>Oganic</span>
+                                    <h4>
+                                        Save 17% <br />
+                                        on <span class="text-brand">Oganic</span><br />
+                                        Juice
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+  {% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'partials/base.html' %}
+{% block title %}Dashboard | {{request.user.username}}{% endblock title %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+
+{% load static %}
+{% block content %}
+
+<style>
+    .add_address{
+        cursor: pointer;
+    }
+    .card {
+        margin-bottom: 1rem;
+    }
+    .card {
+        position: relative;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+    }
+    .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        padding: 1rem;
+    }
+    .card-header {
+        padding: .75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0, 0, 0, .03);
+        border-bottom: 0 solid rgba(0, 0, 0, .125);
+    }
+    .card-body {
+        -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1.25rem;
+    }
+</style>
+
+
+
+<div class="container">
+
+    <div class="row vh-100">
+        <div class="col-10 mx-auto">
+            <div class="card shadow border mt-2">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h4>Add a new address</h4>
+                </div>
+                <form method="post" class="row g-3 mx-4">
+                    {% csrf_token %}
+                    <div class="col-md-6">
+                      {{address_form.first_name}}
+                    </div>
+                    <div class="col-md-6">
+                      {{address_form.last_name}}
+                    </div>
+                    <div class="col-md-6">
+                      {{address_form.email}}
+                    </div>
+                    <div class="col-md-6">
+                      {{address_form.mobile}}
+                    </div>
+                    <div class="col-md-6">
+                      {{address_form.address}}
+                    </div>
+                    <div id="personForm" data-regions-url="{% url 'address:ajax_load_regions' %}" class="col-md-6">{{form.country}}</div>
+                    <div class="col-md-6">{{form.region}}</div>
+                    <div id="location" data-location-url="/location" class="col-md-6">{{form.town}}</div>
+                    <br> <br>
+                    <div class="col-12 my-3 align-items-center d-flex">
+                        {{address_form.status}} &nbsp;
+                        <label for="">Make this default</label>
+                    </div>
+                    <div class="align-items-center">
+                        <input type="submit" class="btn btn-primary" value="submit">
+                    </div>
+                  </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="row">
+        <div class="col-12">
+
+            {% if recently_viewed %}
+                <div class="bg-light">
+                    <div class="container">
+                        <ul class="nav nav-pills nav-big nav-border-anim justify-content-center" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active">Previously viewed product{{recently_viewed|pluralize}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content tab-content-carousel">
+                            <div class="tab-pane p-0 fade show active" id="products-trending-tab" role="tabpanel" aria-labelledby="products-trending-link">
+                                <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                                    data-owl-options='{
+                                        "nav": false, 
+                                        "dots": false,
+                                        "margin": 10,
+                                        "loop": false,
+                                        "responsive": {
+                                            "0": {
+                                                "items":2
+                                            },
+                                            "480": {
+                                                "items":2
+                                            },
+                                            "768": {
+                                                "items":3
+                                            },
+                                            "992": {
+                                                "items":5
+                                            },
+                                            "1200": {
+                                                "items":6,
+                                                "nav": true
+                                            }
+                                        }
+                                    }'>
+
+                                    {% for p in recently_viewed %}
+                                    <div class="product">
+                                        <figure class="product-media">
+                                            <span class="product-label label-sale">Sale</span>
+                                            <a href="{{p.get_absolute_url}}">
+                                                <img src="{{p.image.url}}" alt="Product image" class="product-image">
+                                            </a>
+                                        </figure><!-- End .product-media -->
+
+                                        <div class="product-body">
+                                            <div class="product-cat">
+                                                <a href="{{p.sub_category.get_absolute_url}}">{{p.sub_category.title}}</a>
+                                            </div><!-- End .product-cat -->
+                                            <h3 class="product-title"><a href="{{p.get_absolute_url}}">{{p.title|truncatechars:25}}</a></h3><!-- End .product-title -->
+                                            <div class="product-price">
+                                                <span class="new-price">GHS{{p.price}}</span>
+                                                <span class="old-price">Was GHS{{p.old_price}}</span>
+                                            </div><!-- End .product-price -->
+                                        </div><!-- End .product-body -->
+                                    </div><!-- End .product -->
+                                    {% endfor %}
+                                </div><!-- End .owl-carousel -->
+                            </div><!-- .End .tab-pane -->
+                          
+                        </div><!-- End .tab-content -->
+                    </div><!-- End .container -->
+                </div><!-- End .bg-light pt-4 pb-4 -->
+                {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

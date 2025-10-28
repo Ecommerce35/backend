@@ -1,0 +1,554 @@
+{% extends 'partials/base.html' %}
+{% block title %}Shopping Cart{% endblock title %}
+{% load product_tags %}
+{% load humanize %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content  %}
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<style>
+   #map {
+       height: 300px;
+       width: 100%;
+   }
+</style>
+
+<style>
+   .main-div{
+      margin: 10px 0;
+      padding: 0;
+   }
+   .allData{
+      background: #ffffff;
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 4px;
+   }
+   .main-section, .summary_card{
+      padding: 5px;
+   }
+   .summary_card{
+      width: 100%;
+      max-height: 300px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+   }
+   .collg8{
+      margin-left: 0; 
+      margin-right: 0;
+      margin-bottom: 10px;
+   }
+   .checkout_btn{
+      width: 100%;
+      display: grid;
+      place-content: center;
+      padding: 4px 0;
+      margin: 10px 0;
+      background: #fcbe00;
+      color: #000000;
+   }
+</style>
+
+<style>
+   .accordion {
+     background-color: #fff;
+     color: #444;
+     cursor: pointer;
+     padding: 18px;
+     border: none;
+     outline: none;
+     transition: 0.4s;
+   }
+   
+   /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+   .active, .accordion:hover {
+     background-color: #ccc;
+   }
+   
+   /* Style the accordion panel. Note: hidden by default */
+   .panel {
+     padding: 0 18px;
+     background-color: white;
+     display: none;
+     overflow: hidden;
+   }
+
+   
+   .order .card{
+      position: relative;
+      background: #fff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, .1)}
+   .ribbon{
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      position: absolute}
+   .ribbon::before, .ribbon::after{
+      position: absolute;
+      content: '';display: block;
+      border: 5px solid red;
+   }
+   .ribbon span{
+      position: absolute;
+      display: block;
+      width: 225px;
+      padding: 15px 0;
+      background-color: red;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+      color: #fff;
+      font: 700 18px/1 'Lato', sans-serif;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+      text-transform: uppercase;
+      text-align: center;
+   }
+   .ribbon-top-right{
+      top: -12px;
+      right: -12px;
+   }
+   .ribbon-top-right::before, .ribbon-top-right::after{
+      border-top-color: transparent;
+      border-right-color: transparent;
+   }
+   .ribbon-top-right::before{
+      top: 0;
+      left: 0;
+   }.ribbon-top-right::after{
+      bottom: 0;right: 0;
+   }.ribbon-top-right span{
+      left: -25px;
+      top: 30px;
+      transform: rotate(45deg);
+   }
+   .pic{
+      width: 70px;
+      height: 90px;
+      border-radius: 5px;
+   }
+   td{
+      vertical-align: middle;
+   }
+   .red{
+      color: #fd1c1c;
+      font-weight: 600;
+   }
+   .b-bottom{
+      border-bottom: 2px dotted black;
+      padding-bottom: 20px;
+   }
+  
+   table input{
+      width: 40px;
+      border: 1px solid #eee;
+   }
+   
+   .round{
+      background-color: #eee;
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center}
+   .payment-summary .unregistered{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #eee;
+      text-transform: uppercase;
+      font-size: 14px;
+   }
+  
+   .payment-summary .sale{
+      width: 100%;
+      background-color: #e9b3b3;
+      text-transform: uppercase;
+      font-size: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5PX 0;
+   }
+   .red{
+      color: #fd1c1c;
+   }
+   .del{
+      width: 35px;
+      height: 35px;
+      object-fit: cover;
+   }
+ </style>
+
+  
+<main class="main bg-light">
+
+   <form method="POST" action="{% url 'order:initiate_payment' %}">
+    <div id="cart_items" class="bg-light">
+         <div class="row main-div">
+            
+            <div class="col-lg-8 col-md-8 collg8">
+               <section id="cartdiv-{{.id}}" class="allData shadow-sm">
+                  <div id="cartdiv mine" class="main-section">
+                     <div class="d-flex">
+                        <div class="pb-0 mb-0 pl-10 product-thumbnail">
+                           <a class="product-thumbnail" href="{{c.product.get_absolute_url}}">
+                              {% if c.variant != 'None' %}
+                              <img class="product-thumbnail mn-200" src="{{variant.image.url}}" width="100" alt="">
+                              {% else %}
+                              <img class="product-thumbnail mn-200" src="{{c.image.url}}"  width="100" alt="">
+                              {% endif %}
+                              &nbsp;&nbsp;
+                           </a>
+                        </div>
+                        &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                        <div class="w-100">
+                           <h5><a href="{{c.get_absolute_url}}">{{c.title}}</a></h5>
+                           <div>
+                              <div>
+                                 {% if c.variant == 'Size' %}
+                                 <p class="my-0 py-0">size: {{variant.size}}</p>
+                                 {% elif c.variant == 'Color' %}
+                                 <p class="my-0 py-0">color: {{variant.color}}</p>
+                                 {% elif c.variant == 'Size-Color' %}
+                                 <p class="my-0 py-0">color: {{variant.color}}</p>
+                                 <p class="my-0 py-0">size: {{variant.size}}</p>
+                                 {% endif %}
+            
+                                 {% if c.variant == 'None' %}
+                                 <p class="my-0 py-0">
+                                    <strong>
+                                       {% if c.total_quantity >= 10 %} <span class="text-success fw-bold"> In Stock</span> 
+                                       {% elif c.total_quantity < 10 %}<span class="text-warning fw-bold">{{p.total_quantity}} Item{{p.total_quantity|pluralize}} In Stock</span> 
+                                       {% elif c.total_quantity < 1 %} <span class="text-danger fw-bold"> Out of Stock</span> {% endif %}
+                                    </strong>
+                                 </p>
+                                 <div class="hidden">
+                                    <input readonly type="hidden" value="{{c.id}}" name="product_id">
+                                    <input readonly type="hidden" value="{{variant.id}}" name="variant_id">
+                                    <input readonly type="hidden" id="total_amount_o" value="{{total}}" name="total">
+                                    <input readonly type="hidden" value="{{quantity}}" name="quantity">
+                                    <input readonly type="hidden" value="{{default_delivery_option.delivery_option.id}}" id="delivery_option_" name="delivery_option_">
+                                 </div>
+
+                                 {% else %}
+                                 <p class="my-0 py-0">
+                                    <strong>
+                                       {% if variant.quantity >= 10 %} <span class="text-success fw-bold">In Stock</span> 
+                                       {% elif variant.quantity < 1 %} <span class="text-danger fw-bold"> Out of Stock</span> 
+                                       {% elif variant.quantity < 10 %}<span class="text-warning fw-bold">{{variant.quantity}} Item{{variant.quantity|pluralize}} In Stock</span>{% endif %} 
+                                    </strong>
+                                 </p>
+                                 {% endif %}
+                                 <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="product-price">
+                                       {% if c.variant == 'None' %}
+                                       <span data-base-price="{{c.price}}" class="old-price hidden"></span>
+                                       <span data-base-price="{{c.price|floatformat:"2"}}" class="new-price">{{currency}}{{ c.price|multiply:rate|floatformat:"2"|intcomma }} x {{quantity}} </span>
+                                       {% else %}
+                                       <span data-base-price="{{variant.price}}" class="old-price hidden"></span>
+                                       <span data-base-price="{{variant.price|floatformat:"2"}}" class="new-price">{{currency}}{{ variant.price|multiply:rate|floatformat:"2"|intcomma }} x {{quantity}}</span>
+                                       {% endif %}
+                                    </h4>
+                                 </div>
+                                 <div class="d-flex align-items-center justify-content-between">
+                                   
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+               <section id="cartdiv-{{.id}}" class="allData shadow-sm">
+                  <div id="cartdiv mine" class="main-section">
+                     <div>
+                        <h4>Choose Your Location with the marker</h4>
+                       <input class="w-100" type="text" id="locationName" readonly>
+                        <form id="locationForm">
+                           <input type="hidden" id="latitude" name="latitude" readonly>
+                           <br>
+                           <input type="hidden" id="longitude" name="longitude" readonly>
+                           <br>
+                           {% comment %} <button type="submit">Submit</button> {% endcomment %}
+                        </form>
+                     </div>
+
+                     <!-- MAP -->
+                     <div id="map"></div>
+                     <!-- MAP -->
+
+                  </div>
+               </section>
+            </div>
+
+            <!-- summary section -->
+            <div id="summary_card" class="col-md-4 col-lg-4">
+               <div class="card shadow-sm rounded-3">
+                     <div class="card-body">
+                        <h5 class="text-uppercase border-bottom d-flex justify-content-between align-items-center fw-bold">
+                           <span>Cart Summary</span>
+                        </h5>
+                        <div class="border-bottom">
+                           <div class="product-price d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold">Subtotal</h6>
+                              <h4 data-base-price="{{amount}}" id="summary_totalamount" class="new-price summary_totalamount justify-content-between">{{currency}}{{ amount|multiply:rate|floatformat:"2"|intcomma }}</h4>
+                              <a data-base-price="{{amount}}" class="old-price hidden" name="" id=""></a>
+                           </div>
+                        </div>
+                        <div class="border-bottom">
+                           <div class="product-price d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold">Packaging fee</h6>
+                              <h4 data-base-price="{{total_packaging_fee}}" id="total_packaging_fee" class="new-price justify-content-between">{{currency}}{{ total_packaging_fee|multiply:rate|floatformat:"2"|intcomma }}</h4>
+                              <a data-base-price="{{total_packaging_fee}}" class="old-price hidden" name="" id=""></a>
+                           </div>
+                        </div>
+                        <div class="border-bottom">
+                           <div class="product-price d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold">Delivery fee</h6>
+                              <h4 data-base-price="{{total_delivery_fee}}" id="total_delivery_fee" class="new-price justify-content-between">{{currency}}{{ total_delivery_fee|multiply:rate|floatformat:"2"|intcomma }}</h4>
+                              <a data-base-price="{{total_delivery_fee}}" class="old-price hidden" name="" id=""></a>
+                           </div>
+                        </div>
+                        <div class="border-bottom">
+                           <div class="product-price d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold">Total</h6>
+                              <h4 data-base-price="{{total}}" id="total_amount_" class="new-price justify-content-between">{{currency}}{{ total|multiply:rate|floatformat:"2"|intcomma }}</h4>
+                              <a data-base-price="{{total}}" class="old-price hidden" name="" id=""></a>
+                           </div>
+                        </div>
+                        <div class="border-bottom">
+                           <div class="product-price d-flex justify-content-between align-items-center">
+                              <select style="border: none;" name="delivery_option" id="delivery_option">
+                                 {% for option in delivery_options %}
+                                     <option value="{{ option.delivery_option.id }}" {% if option.default %}selected{% endif %}>
+                                         {{ option.delivery_option.name }}: ({{option.get_delivery_date_range}})
+                                     </option>
+                                 {% endfor %}
+                             </select>
+                           </div>
+                        </div>
+                           {% csrf_token %}
+                           <button class="btn btn-primary btn-block" type="submit">Pay Now</button>
+                        <hr>
+                        <p class="mt-3"><small>Free fast delivery. No order minimum. Exclusive savings. Start your 30-day free trial of Prime.</small></p>
+                     </div>
+               </div>
+            </div>
+            <!-- summary section -->
+         </div>
+      </div>
+   </form>
+   <input readonly id="user_long_" type="hidden" value="{{user_profile.longitude}}">
+   <input readonly id="user_lat_" type="hidden" value="{{user_profile.latitude}}">
+</main>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+   // Initialize and display the map
+   document.addEventListener("DOMContentLoaded", function () {
+      function handleOptionChange() {
+         const selectedOptionId = document.getElementById('delivery_option').value;
+         console.log('Selected option ID:', selectedOptionId);
+         updateDeliveryOption(selectedOptionId);
+         // You can perform further actions with the selectedOptionId here
+      }
+      document.getElementById('delivery_option').addEventListener('change', handleOptionChange);
+      //const savedLatitude = {{ request.user.profile.latitude|default:6.700071 }};
+      const savedLatitude = document.getElementById('user_lat_').value;
+      const savedLongitude = document.getElementById('user_long_').value;
+      //const savedLongitude = {{ request.user.profile.longitude|default:-1.630783 }};
+      const map = L.map("map").setView([savedLatitude, savedLongitude], 13);
+       //const map = L.map("map").setView([6.700071,  -1.630783], 13); // Default center and zoom level
+
+       // Add Leaflet tile layer - replace with your preferred tile provider
+       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+           maxZoom: 19,
+           attribution: 'Adepa market'
+       }).addTo(map);
+
+       // Initialize marker with a default position
+      const marker = L.marker([savedLatitude, savedLongitude], {
+         draggable: true
+     }).addTo(map);
+
+
+       // Function to update marker position and form fields
+       function updateMarkerPosition(e) {
+           const latlng = marker.getLatLng();
+           document.getElementById("latitude").value = latlng.lat.toFixed(6);
+           document.getElementById("longitude").value = latlng.lng.toFixed(6);
+           reverseGeocode(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+           updateProfile(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+       }
+
+       // Event listener for dragging the marker
+       marker.on("dragend", updateMarkerPosition);
+
+       // Center map based on user's current location (optional)
+       if (navigator.geolocation && !savedLatitude && !savedLongitude ) {
+           navigator.geolocation.getCurrentPosition((position) => {
+               console.log(position)
+               const userLocation = {
+                   lat: position.coords.latitude,
+                   lng: position.coords.longitude,
+                   accu: position.coords.accuracy,
+               };
+
+               //const circle = L.circle([userLocation.lat.toFixed(6), userLocation.lng.toFixed(6)], {radius: userLocation.accu}).addTo(map)
+               map.setView(userLocation, 13); // Set map view to user's location
+               marker.setLatLng(userLocation); // Place marker at user's location
+               updateMarkerPosition(); // Update form fields
+               
+         });
+       }
+
+       function reverseGeocode(lat, lng) {
+           const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+           fetch(url)
+               .then(response => response.json())
+               .then(data => {
+                   if (data && data.display_name) {
+                       document.getElementById("locationName").value = data.display_name;
+                       console.log(data)
+                       console.log(data.address.country)
+                       console.log(data.address.city)
+                       console.log(data.address.state)
+                   } else {
+                       document.getElementById("locationName").value = "Location name not found";
+                   }
+               })
+               .catch(error => {
+                   console.error('Error:', error);
+                   document.getElementById("locationName").value = "Error retrieving location name";
+               });
+       }
+
+       // Submit form handler (you can adapt this to your backend handling)
+       const form = document.getElementById("locationForm");
+       form.addEventListener("submit", function(event) {
+           event.preventDefault();
+           const latitude = document.getElementById("latitude").value;
+           const longitude = document.getElementById("longitude").value;
+           // Here you can submit the latitude and longitude to your server
+           console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+           alert(`Location submitted: Latitude ${latitude}, Longitude ${longitude}`);
+           // You might want to redirect or perform further actions after submission
+       });
+
+   
+
+      function updateDeliveryOption(selectedOptionId) {
+         document.getElementById('delivery_option_').value = selectedOptionId;
+     
+         const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+     
+         fetch(`/update-delivery-option/${selectedOptionId}/`, {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'X-CSRFToken': csrfToken,
+             },
+             body: JSON.stringify({ option_id: selectedOptionId }),
+         })
+         .then(response => response.json())
+         .then(data => {
+             if (data.success) {
+                 document.getElementById('total_amount_o').value = data.total_amount_o;
+                 document.getElementById('total_amount_').innerHTML = data.total_amount_;
+                 document.getElementById('total_delivery_fee').innerHTML = data.total_delivery_fee;
+                 document.getElementById('total_packaging_fee').innerHTML = data.total_packaging_fee;
+                 // Update other elements as needed
+             } else {
+                 alert('Failed to update delivery option');
+             }
+         })
+         .catch(error => {
+             console.error('Error:', error);
+             alert('An error occurred while updating the delivery option');
+         });
+     }
+     
+     function updateProfile(latitude, longitude) {
+         const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+         const option_id = document.getElementById('delivery_option_').value;
+         const location = document.getElementById('locationName').value;
+     
+         fetch("{% url 'order:update_profile_location' %}", {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'X-CSRFToken': csrfToken
+             },
+             body: JSON.stringify({ latitude, longitude, option_id, location })
+         })
+         .then(response => response.json())
+         .then(data => {
+             if (data.success) {
+                 console.log('Profile updated successfully.');
+                 // Call updateDeliveryOption function after successful profile update
+                 updateDeliveryOption(option_id);
+             } else {
+                 console.error('Failed to update profile.');
+             }
+         })
+         .catch(error => console.error('Error:', error));
+     }
+
+     setupDeliveryOptionChangeListener();
+   });
+
+
+</script>
+
+{% comment %} <script>
+   document.getElementById('delivery_option').addEventListener('change', function(event) {
+       const selectedOptionId = event.target.value;
+       document.getElementById('delivery_option_').value = selectedOptionId;
+
+       const option_id = document.getElementById('delivery_option_').value = selectedOptionId;
+
+
+       fetch(`/update-delivery-option/${selectedOptionId}/`, {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+               'X-CSRFToken': document.querySelector("input[name='csrfmiddlewaretoken']").value,
+           },
+           body: JSON.stringify({ option_id: selectedOptionId}),
+       })
+       .then(response => response.json())
+       .then(data => {
+           if (data.success) {
+               document.getElementById('total_amount_o').value = data.total_amount_o;
+               document.getElementById('total_amount_').innerText = data.total_amount_;
+               document.getElementById('total_delivery_fee').innerText = data.total_delivery_fee;
+               document.getElementById('total_packaging_fee').innerText = data.total_packaging_fee;
+               // You can update other elements as needed
+           } else {
+               alert('Failed to update delivery option');
+           }
+       })
+       .catch(error => {
+           console.error('Error:', error);
+           alert('An error occurred while updating the delivery option');
+       });
+   });
+</script> {% endcomment %}
+
+<script>
+  
+  
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

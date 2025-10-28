@@ -1,0 +1,233 @@
+{% load humanize %}
+{% load product_tags %}
+
+<div class="row">
+    <div class="col-lg-9">
+        <div class="product-details-top">
+            <div class="row">
+                <div class="col-md-6 col-lg-7">
+                    <div id="ajax_gallery" class="product-gallery">
+                        {% if variant %}
+                            <figure class="product-main-image">
+                                <span class="product-label label-sale">Sale</span>
+                                <img id="product-zoom" src="{{variant.image.url}}" data-zoom-image="{{variant.image.url}}" alt="product image">
+
+                                <a href="#" id="btn-product-gallery" class="btn-product-gallery">
+                                    <i class="icon-arrows"></i>
+                                </a>
+                            </figure><!-- End .product-main-image -->
+                        {% else %}
+                            <figure class="product-main-image">
+                                <span class="product-label label-sale">Sale</span>
+                                <img id="product-zoom" src="{{p.image.url}}" data-zoom-image="{{p.image.url}}" alt="product image">
+
+                                <a href="#" id="btn-product-gallery" class="btn-product-gallery">
+                                    <i class="icon-arrows"></i>
+                                </a>
+                            </figure><!-- End .product-main-image -->
+                        {% endif %}
+
+                        <div id="product-zoom-gallery" class="product-image-gallery max-col-6">
+                            
+                            {% if variant %}
+                                <a class="product-gallery-item active" href="#" data-image="{{variant.image.url}}" data-zoom-image="{{variant.image.url}}">
+                                    <img src="{{variant.image.url}}" alt="product with model">
+                                </a>
+                            {% else %}
+                                <a class="product-gallery-item active" href="#" data-image="{{variant.image.url}}" data-zoom-image="{{variant.image.url}}">
+                                    <img src="{{p.image.url}}" alt="product with model">
+                                </a>
+                            {% endif %}
+
+                            {% if varimage %}
+                                {% for p in varimage %}
+                                <a class="product-gallery-item" href="#" data-image="{{p.images.url}}" data-zoom-image="{{p.images.url}}">
+                                    <img src="{{p.images.url}}" alt="product cross">
+                                </a>
+                                {% endfor %}
+                            {% else %}
+                                {% for p in p_image %}
+                                <a class="product-gallery-item" href="#" data-image="{{p.images.url}}" data-zoom-image="{{p.images.url}}">
+                                    <img src="{{p.images.url}}" alt="product cross">
+                                </a>
+                                {% endfor %}
+                            {% endif %}
+
+                        </div><!-- End .product-image-gallery -->
+                    </div><!-- End .product-gallery -->
+                </div><!-- End .col-lg-7 -->
+
+                <div class="col-md-6 col-lg-5">
+                    <div class="product-details">
+                        <h1 class="product-title">{{p.title|truncatechars:150|title}}</h1><!-- End .product-title -->
+
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: {{average_rating_percentage}}%;"></div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <a class="ratings-text" href="#product-review-link" id="review-link">( {{p.reviews.count}} Review{{p.reviews.count|pluralize}} )</a>
+                        </div><!-- End .rating-container -->
+
+                        <div class="product-price">
+                            <span data-base-price="{{variant.price|floatformat:"2"}}" id="price" class="new-price">{{currency}}{{ variant.price|multiply:rate|floatformat:"2" }}</span>
+                            <span data-base-price="{{p.old_price|floatformat:"2"}}" class="old-price">{{currency}}{{ p.price|multiply:rate|floatformat:"2" }}</span>
+                        </div><!-- End .product-price -->
+
+                        <div class="product-content">
+                            <p class="my-2 font-xs">
+                                Order above <strong>GH₵200</strong> gets free delivery | regular delivery from Vendor to <a href="#"><strong onclick="document.getElementById('id02').style.display='block'" id="town_name">{{location.town}}</strong></a> is <strong id="town_fee">GH₵{{location.town.fee|floatformat:2}}</strong>
+                            </p>
+                        </div><!-- End .product-content -->
+                        
+                        <div class="details-filter-row details-row-size">
+                            <label for="size">Size:</label>
+                            <input type="hidden" name="productid" id="productId" value="{{p.id}}">
+                            <div class="select-custom">
+                                <select name="size" id="mySelect" onclick="myFunction()" class="form-control">
+                                    {% for rs in sizes %}
+                                        <option value="{{rs.id}}" {% if variant.id == rs.id %} selected {% endif %} >{{rs.size}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div><!-- End .select-custom -->
+                        </div><!-- End .details-filter-row -->
+
+                        {% include 'partials/modal.html' %}
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span for="size-guide">Selected:  </span> &nbsp;&nbsp;
+                                <span id="selected_variant" class="fw-bold">{{variant.size.name}}</span>
+                            </div><!-- End .select-custom -->
+                            <span style="cursor: pointer;" class="chart_link"><a id="sizeChart-button" onclick="document.getElementById('id01').style.display='block'"><i class="icon-th-list"></i>size guide</a></span>
+                        </div><!-- End .details-filter-row -->
+
+                        
+
+                        <div class="" style="margin: 0; padding: 0;">
+                            <input type="hidden" class="variant_id" id="variant" value="{{variant.id}}">
+                            <input type="hidden" class="productId" value="{{p.id}}">
+                            <div id="add_to_cart_btn" class="cart-option">
+                                <div id="button_toggle">
+                                    {% if control == 1 %}
+                                        <div class="input-counter">
+                                            <span onclick="decreaseQuantity()" class="minus-button shadow-sm"><i class="icon-minus"></i></span>
+                                            <input class="quantity_total_" type="text" min="0" max="{{variant.quantity}}" id="quant" name="quantity" value="{{quantity}}">
+                                            <span onclick="increaseQuantity()" class="plus-button shadow-sm"><i class="icon-plus"></i></span>
+                                        </div>
+                                    {% else %}  
+                                        <button title="Add to shopping Cart" onclick="addToCart()" class="cart-btn shadow w-100 text-white">Add to Cart</button>
+                                    {% endif %}
+                                </div>
+                                <div id="quantity_control_1" class="hidden px-0 mx-0">
+                                    <div class="input-counter">
+                                        <span onclick="decreaseQuantity()" class="minus-button shadow-sm"><i class="icon-minus"></i></span>
+                                        <input class="quantity_total_" id="quantity_total_" type="text" min="0" max="{{variant.quantity}}" name="quantity" value="{{quantity}}">
+                                        <span onclick="increaseQuantity()" class="plus-button shadow-sm"><i class="icon-plus"></i></span>
+                                    </div>
+                                </div>
+                                <div id="quantity_control_0" class="hidden">
+                                    <button title="Add to shopping Cart" onclick="addToCart()" class="cart-btn shadow w-100 text-white">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div><!-- End .product-details-action -->
+
+                        <style>
+                            .cart-btn{
+                                border: none;
+                                border-radius: 20px;
+                                padding: 5px 15px;
+                                width: 100%;
+                                background: #16bcdc;
+                                place-content: center;
+                                display: grid;
+                            }
+                            .cart-btn:hover:focus{
+                                border: none;
+                                border-radius: 40px;
+                                padding: 5px 15px;
+                                width: 100%;
+                                background: #16bcdb;
+                            }
+                            .loader{
+                                pointer-events: none;
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 50%;
+                                border: 3px solid transparent;
+                                border-top-color: #fff;
+                                animation: an1 1s ease infinite;
+                            }
+                            @keyframes an1 {
+                                0%{
+                                    transform: rotate(0turn);
+                                }
+                                100%{
+                                    transform: rotate(1turn);
+                                }
+                            }
+                        </style>
+
+                        <div class="product-details-footer mt-1">
+                            <div class="product-cat">
+                                <span>Category:</span>
+                                <a href="{{p.sub_category.category.main_category.get_absolute_url}}">{{p.sub_category.category.main_category.title}}</a>,
+                                <a href="{{p.sub_category.category.get_absolute_url}}">{{p.sub_category.category.title}}</a>,
+                                <a href="{{p.sub_category.get_absolute_url}}">{{p.sub_category.title}}</a>
+                            </div><!-- End .product-cat -->
+
+                            <div class="social-icons social-icons-sm">
+                                <span class="social-label">Share:</span>
+                                <a href="#" class="social-icon" title="Facebook" target="_blank"><i class="icon-facebook-f"></i></a>
+                                <a href="#" class="social-icon" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>
+                                <a href="#" class="social-icon" title="Instagram" target="_blank"><i class="icon-instagram"></i></a>
+                                <a href="#" class="social-icon" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
+                            </div>
+                        </div><!-- End .product-details-footer -->
+
+                    
+                    </div><!-- End .product-details -->
+                </div><!-- End .col-lg-5 -->
+            </div><!-- End .row -->
+        </div><!-- End .product-details-top -->
+    </div><!-- End .col-xl-10 -->
+
+    <aside class="col-lg-3">
+        <div class="sidebar sidebar-product">
+            <div class="widget widget-products">
+                <h4 class="widget-title">Related Product</h4><!-- End .widget-title -->
+
+                <div class="products">
+                    {% for p in products %}
+                    <div class="product product-sm">
+                        <figure class="product-media">
+                            <a href="{{p.get_absolute_url}}">
+                                <img src="{{p.image.url}}" alt="Product image" class="product-image">
+                            </a>
+                        </figure>
+
+                        <div class="product-body">
+                            <h5 class="product-title"><a href="{{p.get_absolute_url}}">{{p.title|truncatechars:40}}</a></h5><!-- End .product-title -->
+                            <div class="product-price">
+                                <span data-base-price="{{p.price|floatformat:"2"}}" class="new-price">{{currency}}{{ p.price|multiply:rate|floatformat:"2" }}</span>
+                                <span data-base-price="{{p.price|floatformat:"2"}}" class="old-price">{{currency}}{{ p.price|multiply:rate|floatformat:"2" }}</span>
+                            </div><!-- End .product-price -->
+                        </div><!-- End .product-body -->
+                    </div><!-- End .product product-sm -->
+                    {% endfor %}
+                </div><!-- End .products -->
+
+                <a href="{{p.sub_category.get_absolute_url}}" class="btn btn-outline-dark-3"><span>View More Products</span><i class="icon-long-arrow-right"></i></a>
+            </div><!-- End .widget widget-products -->
+
+            <div class="widget widget-banner-sidebar">
+                <div class="banner-sidebar-title">ad box 280 x 280</div><!-- End .ad-title -->
+                
+                <div class="banner-sidebar banner-overlay">
+                    <a href="#">
+                        <img src="assets/images/blog/sidebar/banner.jpg" alt="banner">
+                    </a>
+                </div><!-- End .banner-ad -->
+            </div><!-- End .widget -->
+        </div><!-- End .sidebar sidebar-product -->
+    </aside><!-- End .col-lg-3 -->
+</div>

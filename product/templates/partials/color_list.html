@@ -1,0 +1,14 @@
+<input type="hidden" name="size" id="size" value="{{ size_id }}">
+<div id="appendHere" class="product-nav product-nav-thumbs appendHere">
+    {% for rs in colors %}
+        <input type="hidden" name="size" id="mySelect" value="{{ rs.id }}">
+        <input type="hidden" id="productId" value="{{ p.id }}">
+        <a class="child {% if variant.id == rs.id %} active {% endif %}">
+            {% if colors %} 
+                <img title="{{rs.color.name}}" onclick="myFunc('{{rs.id}}')" src="{{ rs.image.url }}" alt="product desc">
+            {% else %}
+                <img title="{{rs.color.name}}" onclick="myFunc('{{rs.id}}')" src="{{ p.image.url }}" alt="product desc">
+            {% endif %}
+        </a>
+    {% endfor %}
+</div><!-- End .product-nav -->

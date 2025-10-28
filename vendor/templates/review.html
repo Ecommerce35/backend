@@ -1,0 +1,101 @@
+{% extends 'partials/base.html' %}
+{% block title %}Products by vendor{% endblock title %}
+{% load static %}
+{% block content %}
+<style>
+  .man {
+      background-color: #ccc;
+      border-radius: 5px;
+  }
+  .man:hover{
+      background-color: #ccb;
+  }
+</style>
+<!-- START vendor cover image -->
+  <div class="carousel slide shadow">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{{ vendor.user_profile.cover_image.url }}" class="d-block" height="320px" width="100%" style="filter: brightness(40%);" alt="vendor cover image">
+        <div class="carousel-caption">
+          <img src="{{ vendor.user_profile.profile_image.url }}" class="rounded-pill mb-2" width="20%" alt="vendor profile image">
+          <h4 class="text-white fw-bold">{{ vendor.name }}</h4>
+          {% if vendor.is_open %}
+            <span class="badge bg-success border border-success-subtle text-success-emphasis rounded-pill">Open</span>
+          {% else %}
+            <span class="badge bg-danger border border-danger-subtle text-danger-emphasis rounded-pill">Close</span>
+          {% endif %}
+          {% if vendor.user_profile.address %}<p><i class="bi bi-geo-alt"></i> {{ vendor.user_profile.address }}</p>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- END vendor cover image -->
+  <div class="container-fluid light-bg-s">
+    <div class="row">
+      <!-- START vendor sidebar -->
+      <div class="col-md-2 p-3">
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="mb-2 man"><a href="{% url 'vendor:vendor-detail' vendor.slug %}" class="nav-link {% if '/vendor/{{vendor.slug}}/' in request.path %}text-light bg-dark{% else %}text-dark{% endif %}"><i class="fas fa-shopping-bag"></i> Products</a></li>
+          <li class="mb-2 man"><a href="#" class="nav-link {% if '/vendor/my-orders/' in request.path or '/vendor/' in request.path %}text-light bg-dark{% else %}text-dark{% endif %}"><i class="fas fa-phone"></i> Contact</a></li>
+          <li class="mb-2 man"><a href="{% url 'vendor:vendor_review' vendor.slug %}" class="nav-link {% if '/vendor/review/' in request.path %}text-light bg-dark{% else %}text-dark{% endif %}"><i class="fas fa-comments"></i> Reviews</a></li>
+          <li class="mb-2 man"><a href="{% url 'vendor:operating-hours' %}" class="nav-link {% if '/operating-hours/' in request.path %}text-light bg-dark{% else %}text-dark{% endif %}"><i class="fas fa-clock"></i> Operating hours</a></li>
+        </ul>
+      </div>
+    <!-- END vendor sidebar -->
+        <div class="col-md-10">
+           <!-- trending-product-area-start -->
+           <section class="trending-product-area pt-25 pb-15">
+            <div class="custom-conatiner">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="section__head d-flex justify-content-between mb-30">
+                            <div class="section__title section__title-2">
+                                <h5 class="st-titile">Our Products({{vendor.product.count}})</h5>
+                            </div>
+                            <div class="totall-product">
+                                <p>We found <strong class="text-success">{{vendor.product.count}}</strong> item{{vendor.product.count|pluralize}} for you!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for p in products %}
+                    <div class="col-sm-6 col-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2 px-1">
+                        <div class="product__item product__item-2 b-radius-2 mb-20">
+                            <div class="product__thumb fix">
+                                <div class="product-image w-img">
+                                    <a href="{{p.get_absolute_url}}">
+                                        <img src="{{p.image.url}}" alt="product">
+                                    </a>
+                                </div>
+                                <div class="product__offer">
+                                <span class="discount">{{p.get_percentage|floatformat:0}}%</span>
+                                </div>
+                            </div>
+                            <div class="product__content product__content-2">
+                                <h6><a href="{{p.get_absolute_url}}">{{p.title|title|truncatechars:15}}</a></h6>
+                                <div class="rating">
+                                    <span>({{ p.reviews.all.count }} review)</span>
+                                </div>
+                                <div class="price">
+                                    <span>₵{{p.price}}</span>
+                                </div>
+                            </div>
+                            <div class="product__add-cart text-center">
+                                <a href="{{p.get_absolute_url}}" class="cart-btn-3 product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
+                                View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <!-- trending-product-area-end -->
+
+        </div>
+        
+    </div>
+  </div>
+{% endblock content %}

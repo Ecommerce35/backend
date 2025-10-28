@@ -1,0 +1,43 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+
+   <style>
+    .hi{
+        text-align: center;
+        font-size: 50px;
+    }
+    p{
+        text-align: center;
+        line-height: 1.4;
+        font-size: medium;
+    }
+   </style>
+    <main class="main pages">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span><a href="{% url 'core:about_us' %}">About us</a><span></span> Easy returns
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-6 mb-50 mt-50 text-center">
+                    <div class="featured-card">
+                        <img src="{% static 'assets/imgs/theme/icons/icon-4.svg' %}" alt="" />
+                        <h4 class="hi">Easy Returns</h4>
+                        <p>
+                           Adepa Global Marketplace understands that customer satisfaction is paramount. Therefore, it offers a hassle-free and
+                           transparent return policy, allowing caustomers to return products easily if they are not satisfied with their 
+                           purchase. This provides peace of mind to customers, knowing that they can shop with confidence and the option to
+                           return or exchange items if needed.
+                        </p>
+                        <a class="btn btn-outline-info" href="{% url 'core:about_us' %}">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock content %}

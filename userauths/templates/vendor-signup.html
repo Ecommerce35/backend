@@ -1,0 +1,71 @@
+{% extends 'partials/base2.html' %}
+{% load static %}
+{% block title %}Vendor | Register shop{% endblock title %}
+{% block content %}
+{% load countries %}
+<div class="card shadow container col-md-5 my-5 p-5">
+    <form id="vendorSignupForm" autocomplete="on" method="POST" action="{% url 'userauths:vendor_signup' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h6 class="mb-0 fw-normal text-center"><b>vendor</b></h6>
+        <h1 class="mb-3 h3 fw-normal text-center"><b>Signup</b></h1><hr>
+        <div class="form-floating">{{ vendor_form.name }}<label for="id_name">Store name<span class="text-danger">*</span></label></div>
+        <div class="form-floating">{{ vendor_form.contact }}<label for="id_name">business contact<span class="text-danger">*</span></label></div>
+        <div class="form-floating">{{ vendor_form.email }}<label for="id_name">business email<span class="text-danger">*</span></label></div>
+        <div class="form-floating">{{ vendor_form.license }}</div>
+        <small style="font-size: 12px;">Please upload license<span class="text-danger">*</span></small>
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+        <div class="text-center my-5"><input class="btn btn-dark rounded-pill" type="submit" value="Signup"></div>
+    </form>
+    <div id="errorMessages" class="text-danger"></div>
+</div>
+
+{% if vendor_form.errors %}
+<div class="alert alert-danger text-center border pt-20 pb-20 pl-20 pr-20">
+    <h6>{{vendor_form.errors}}</h6>
+</div>
+{% endif %}
+
+
+<script>
+  function getLocation() {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+          alert("Geolocation is not supported by this browser.");
+      }
+  }
+  
+  function showPosition(position) {
+      document.getElementById("latitude").value = position.coords.latitude;
+      document.getElementById("longitude").value = position.coords.longitude;
+      console.log(position)
+  }
+  
+  function showError(error) {
+      switch(error.code) {
+          case error.PERMISSION_DENIED:
+              alert("User denied the request for Geolocation.");
+              break;
+          case error.POSITION_UNAVAILABLE:
+              alert("Location information is unavailable.");
+              break;
+          case error.TIMEOUT:
+              alert("The request to get user location timed out.");
+              break;
+          case error.UNKNOWN_ERROR:
+              alert("An unknown error occurred.");
+              break;
+      }
+  }
+  
+  window.onload = function() {
+      getLocation();
+  };
+  </script>
+  <script>
+    
+  </script>
+  
+
+{% endblock content %}

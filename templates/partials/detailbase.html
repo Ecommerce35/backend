@@ -1,0 +1,75 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>AdepaMarket | {% block title %}{% endblock title %}</title>
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="" />
+        <meta property="og:type" content="" />
+        <meta property="og:url" content="" />
+        <meta property="og:image" content="" />
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/imgs/theme/favicon.svg' %}" />
+        <!-- Template CSS -->
+        <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+        <!-- CSS here -->
+        <link rel="stylesheet" href="{% static 'assets5/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/meanmenu.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/animate.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/owl-carousel.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/swiper-bundle.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/magnific-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/nice-select.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/font-awesome-pro.css' %}">
+        <link rel="stylesheet" href="{% static 'assets5/css/style.css' %}">
+
+        <!-- In html add this just before end of body tag -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+
+    <body class="bg-light">
+        <form>{% csrf_token %}</form>
+        {% include 'headers/header2.html' %}
+        {% block content %}
+        {% endblock  %}
+        {% include 'footers/footer1.html' %}
+        <script src="{% static 'assets/js/vendor/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'assets/js/vendor/jquery-migrate-3.3.0.min.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/slick.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/jquery.syotimer.min.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/wow.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/slider-range.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/perfect-scrollbar.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/magnific-popup.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/waypoints.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/isotope.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/scrollup.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/jquery.vticker-min.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/jquery.theia.sticky.js' %}"></script>
+        <script src="{% static 'assets/js/plugins/jquery.elevatezoom.js' %}"></script>
+        <!-- Template  JS -->
+        <script src="{% static 'assets/js/main.js' %}"></script>
+        <script src="{% static 'assets/js/shop.js' %}"></script>
+        <script src="{% static 'assets/js/function.js' %}"></script>
+        {% comment %} <script src="{% static 'assets/js/toastr.js' %}"></script> {% endcomment %}
+        <script src="{% static 'assets/js/sweetalert2.min.js' %}"></script>
+        <script src="{% static 'assets/js/productDetail.js' %}"></script>
+        <!-- JS here -->
+        <script src="{% static 'assets5/js/bootstrap-bundle.js' %}"></script>
+        <script src="{% static 'assets5/js/meanmenu.js' %}"></script>
+        <script src="{% static 'assets5/js/swiper-bundle.js' %}"></script>
+        <script src="{% static 'assets5/js/owl-carousel.js' %}"></script>
+        <script src="{% static 'assets5/js/tweenmax.js' %}"></script>
+        <script src="{% static 'assets5/js/magnific-popup.js' %}"></script>
+        <script src="{% static 'assets5/js/parallax.js' %}"></script>
+        <script src="{% static 'assets5/js/nice-select.js' %}"></script>
+        <script src="{% static 'assets5/js/counterup.js' %}"></script>
+        <script src="{% static 'assets5/js/imagesloaded-pkgd.js' %}"></script>
+        {% comment %} <script src="{% static 'assets5/js/main.js' %}"></script> {% endcomment %}
+    </body>
+</html>

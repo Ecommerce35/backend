@@ -1,0 +1,193 @@
+{% extends 'partials/base.html' %}
+{% block title %}Dashboard | {{request.user.username}}{% endblock title %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+
+{% load static %}
+{% block content %}
+
+
+<main class="main">
+    <div class="page-content">
+        <div class="container">
+            
+        <style>
+            
+            .grid {
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                padding: 1rem;
+            }
+            
+            .card {
+                background-color: white;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+                padding: 16px;
+                border-radius: 4px;
+            }
+            .card:hover {
+                background-color: #fbfbfb;
+            }
+            
+            .headerd {
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+            }
+            
+            .header-img {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 100%;
+                margin-right: 1rem;
+                flex-shrink: 0;
+            }
+        </style>
+        <h4 class="mb-2 mt-2">Your account</h4>
+            <div class="grid">
+                <div class="card">
+                    <a class="text-dark" href="{% url 'customer:profile' %}">
+                      <div class="headerd">
+                        <img src="{{user.profile.image.url}}" alt="">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Profile Management</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">
+                            Personal information section for updating name,
+                             email, and contact details</div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="{% url 'customer:custommer_address' %}">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Your addresses</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">Edit, remove or set default address</div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="#">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Order History</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">
+                            List of past orders with details( Order number, date, status, and total amount )</div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="#">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Reviews</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illum, vel!</div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="{% url 'customer:recently' %}">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="{{user_profile.profile_image.url}}" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Recently viewed products</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illum, vel!</div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="#">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Account Security</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">Edit login, name, and mobile number</div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="#">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Saved Products(Wishlist)</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">
+                            Items you've added to your wishlist. 
+                            You can easily move them to your cart </div>
+                      </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a class="text-dark" href="{% url 'userauths:sign_out' %}">
+                      <div class="headerd">
+                        <img class="header-img skeleton" src="https://source.unsplash.com/100x100/?nature" />
+                        <div class="title" data-title>
+                          <div class="skeleton skeleton-text">Logout</div>
+                        </div>
+                      </div>
+                      <div data-body>
+                        <div class="skeleton skeleton-text">
+                            Items you've added to your wishlist. 
+                            You can easily move them to your cart </div>
+                      </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div><!-- End .page-content -->
+</main><!-- End .main -->
+    <script>
+        const labels = {{ month|safe }}
+        const data = {
+          labels: labels,
+          datasets: [{
+            label: 'Orders',
+            backgroundColor: 'rgb(59, 183, 126)',
+            borderColor: 'rgb(59, 183, 126)',
+            data: {{ total_orders|safe }}
+          }],
+
+        };
+        const config = {
+          type: 'line',
+          data: data,
+          options: {
+            tooltips: {enabled: false},
+            hover: {mode: null},
+          }
+        };
+
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+      </script>
+{% endblock content %}

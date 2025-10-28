@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Application Denied</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .email-header h1 {
+            font-size: 24px;
+            color: #ff4d4d;
+        }
+
+        .email-body {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .email-body p {
+            margin-bottom: 20px;
+        }
+
+        .email-footer {
+            text-align: center;
+            font-size: 14px;
+            color: #999999;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        .email-footer p {
+            margin: 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #ff4d4d;
+            color: #ffffff;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background-color: #e60000;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .contact {
+            font-size: 14px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-container">
+        <div class="email-header">
+            <img src="https://yourdomain.com/logo.png" alt="Company Logo" class="logo" />
+            <h1>Your Shop Application Has Been Denied</h1>
+        </div>
+
+        <div class="email-body">
+            <p>Dear {{ user.first_name }},</p>
+
+            <p>We regret to inform you that your shop, <strong>{{ vendor.name }}</strong>, has not been approved at this time. We understand this may be disappointing, and we want to assure you that we value your interest in joining our platform.</p>
+
+            <p>Your application did not meet the requirements outlined in our application guidelines. Please review the following reasons for denial:</p>
+
+            <ul>
+                <li>Missing required documents (e.g., business license, student ID)</li>
+                <li>Business model or product type not suitable for our marketplace</li>
+                <li>Incomplete application information</li>
+            </ul>
+
+            <p>If you believe there has been a mistake or if you would like to make adjustments to your application, feel free to reach out to us at <a href="mailto:support@yourcompany.com">support@yourcompany.com</a> for further clarification. We encourage you to reapply once you have addressed the issues outlined above.</p>
+
+            <p>Thank you for your time and understanding. We wish you the best of luck in your business endeavors.</p>
+
+            <p>If you'd like to learn more about our vendor program, please visit our <a href="https://yourwebsite.com/vendor-guidelines" class="button">Vendor Guidelines</a> page for more information.</p>
+        </div>
+
+        <div class="email-footer">
+            <p>Best regards,</p>
+            <p>The [Your Company Name] Team</p>
+            <p class="contact">For support, contact us at <a href="mailto:support@yourcompany.com">support@yourcompany.com</a></p>
+        </div>
+    </div>
+
+</body>
+</html>

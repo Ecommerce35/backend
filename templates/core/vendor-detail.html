@@ -1,0 +1,179 @@
+{% extends 'partials/base.html' %}
+{% block title %}{{vendor.title|title}}{% endblock title %}
+
+{% load static %}
+{% block content  %}
+    <main>
+
+        <!-- slider-area-start -->
+        <div class="slider-area light-bg-s pt-60">
+            <div class="container custom-conatiner">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="swiper-container slider__active pb-30">
+                            <div class="slider-wrapper swiper-wrapper">
+                                <div class="single-slider swiper-slide b-radius-2 slider-height-2 d-flex align-items-center" data-background="{{vendor.cover_image.url}}">
+                                    <div class="slider-content slider-content-2">
+                                        <div class="row g-0 pb-5 pt-15" >
+                                            <div class="row col-xl-5">
+                                                <img data-animation="fadeInRight" data-delay="1.7s" class="col" style="width: 15%;" src="{{vendor.image.url}}" alt="">
+                                                <h2 style="margin-left: 30px;" data-animation="fadeInLeft" data-delay="1.7s" class="slider-title col-md-8 mt-30">{{vendor.title}} <p>{{vendor.date|date}}</p> </h2>
+                                                <div data-animation="fadeInRight" data-delay="1.7s" class="product-rate-cover mb-15">
+                                                    <div class="product-rate d-inline-block">
+                                                        <div class="product-rating" style="width: 90%"></div>
+                                                    </div>
+                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-7">
+                                                <p class="pr-20 slider_text" data-animation="fadeInLeft" data-delay="1.9s">{{vendor.description}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-0">
+                                            <div class="col-md-5 slider-bottom-btn mt-35">
+                                                <div data-animation="fadeInUp" data-delay="1.1s" class="follow-social">
+                                                    <h4 data-animation="fadeInUp" data-delay="1.15s"  class="st-btn-border b-radius-2">Follow Us</h4>
+                                                    <ul class="social-network">
+                                                        <li class="hover-up">
+                                                            <a href="#">
+                                                                <img src="{% static 'assets/imgs/theme/icons/social-tw.svg' %}" alt="" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="hover-up">
+                                                            <a href="#">
+                                                                <img src="{% static 'assets/imgs/theme/icons/social-fb.svg' %}" alt="" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="hover-up">
+                                                            <a href="#">
+                                                                <img src="{% static 'assets/imgs/theme/icons/social-insta.svg' %}" alt="" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="hover-up">
+                                                            <a href="#">
+                                                                <img src="{% static 'assets/imgs/theme/icons/social-pin.svg' %}" alt="" />
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                    <div class="vendor-info text-white mt-35" data-animation="fadeInUp" data-delay="1.1s">
+                                                        <ul class="font-sm">
+                                                            <li><img class="mr-5" src="{% static 'assets/imgs/theme/icons/icon-location.svg' %}" alt="" /><strong>Address: </strong>{{vendor.address}}</li>
+                                                            <li><img class="mr-5" src="{% static 'assets/imgs/theme/icons/icon-contact.svg' %}" alt="" /><strong>Call Us: </strong>{{vendor.contact}}</li>
+                                                        </ul>
+                                                    </div>
+                                            </div>                                        
+                                    </div>
+                                </div><!-- /single-slider -->
+                                <div class="main-slider-paginations"></div>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+        <!-- slider-area-end -->
+
+        <!-- trending-product-area-start -->
+        <section class="trending-product-area light-bg-s pt-25 pb-15">
+            <div class="container custom-conatiner">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="section__head d-flex justify-content-between mb-30">
+                            <div class="section__title section__title-2">
+                                <h5 class="st-titile">Our Products({{vendor.product.count}})</h5>
+                            </div>
+                            <div class="totall-product">
+                                <p>We found <strong class="text-success">{{vendor.product.count}}</strong> item{{vendor.product.count|pluralize}} for you!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for p in products %}
+                    <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2">
+                        <div class="product__item product__item-2 b-radius-2 mb-20">
+                            <div class="product__thumb fix">
+                                <div class="product-image w-img">
+                                    <a href="{% url 'core:product_detail' p.slug p.id p.pid %}">
+                                        <img src="{{p.image.url}}" alt="product">
+                                    </a>
+                                </div>
+                                <div class="product__offer">
+                                <span class="discount">{{p.get_percentage|floatformat:0}}%</span>
+                                </div>
+                                <div class="product-action product-action-2">
+                                    <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId">
+                                        <i class="fal fa-eye"></i>
+                                        <i class="fal fa-eye"></i>
+                                    </a>
+                                    <a href="#" class="icon-box icon-box-1">
+                                        <i class="fal fa-heart"></i>
+                                        <i class="fal fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product__content product__content-2">
+                                <h6><a href="{% url 'core:product_detail' p.slug p.id p.pid %}">{{p.title}}</a></h6>
+                                <p><a href="{% url 'core:vendor-detail' p.vendor.vid %}">{{p.vendor.title}}</a></p>
+                                <div class="rating mb-5 mt-10">
+                                    <span>({{p.review_all.count}} review)</span>
+                                </div>
+                                <div class="price">
+                                    <span>₵{{p.price}}</span>
+                                </div>
+                            </div>
+                            <div class="product__add-cart text-center">
+                                <button type="button" class="cart-btn-3 product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
+                                Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <!-- trending-product-area-end -->
+
+        <!-- banner__area-start -->
+        <section class="categories__area light-bg-s pt-20 pb-10">
+            <div class="container custom-conatiner">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="section__head d-flex justify-content-between mb-30">
+                            <div class="section__title section__title-2">
+                                <h5 class="st-titile">Popular Categories</h5>
+                            </div>
+                            <div class="button-wrap button-wrap-2">
+                                <a href="product.html">See All Product <i class="fal fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="carausel-8-columns" id="carausel-8-columns">
+                    {% for c in sub_categories %}
+                        <div class="col-xl-2 col-lg-3 col-md-4 ml-5">
+                            <div class="categories__item p-relative w-img mb-30">
+                                <div class="categories__img b-radius-2">
+                                    <a href="product-details.html"><img src="{{c.image.url}}" alt=""></a>
+                                </div>
+                                <div class="categories__content">
+                                    <h6><a href="product-details.html">{{c.title}}</a></h6>
+                                    <p>({{c.product.count}} Products)</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- banner__area-end -->
+
+    </main>
+{% endblock %}

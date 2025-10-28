@@ -1,0 +1,42 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+
+   <style>
+    .hi{
+        text-align: center;
+        font-size: 50px;
+    }
+    p{
+        text-align: center;
+        line-height: 1.4;
+        font-size: medium;
+    }
+   </style>
+    <main class="main pages">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span><a href="{% url 'core:about_us' %}">About us</a><span></span> Wide Assortment
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-6 mb-50 mt-50 text-center">
+                    <div class="featured-card">
+                        <img src="{% static 'assets/imgs/theme/icons/icon-2.svg' %}" alt="" />
+                        <h4 class="hi">Wide Assortment</h4>
+                        <p>
+                            Adepa Global Marketplace boasts a diverse and intensive assortment of products from various categories,
+                            including electronics, fashion, home and kitchen, beauty and more. With a wide range of options available,
+                             customers can find products that suit their preferences and nedds, making it a one-stop-shop for all their shopping needs
+                        </p>
+                        <a class="btn btn-outline-warning" href="{% url 'core:about_us' %}">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock content %}

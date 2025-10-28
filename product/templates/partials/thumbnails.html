@@ -1,0 +1,58 @@
+<div id="ajax_gallery" class="detail-gallery">
+    <!-- MAIN SLIDES -->
+    <div style="border: none;" class="product-image-slider w-100">
+        {% if variant %}
+        <figure class="border-radius-0">
+            <a class="popup-image" href="{{image.url}}">
+                <img src="{{main_image.image.url}}" alt="product image" loading="eager" />
+            </a>
+        </figure>
+        {% else %}
+            <figure class="border-radius-0">
+                <a class="popup-image" href="{{p.image.url}}">
+                    <img src="{{product.image.url}}" alt="product image" loading="eager" />
+                </a>
+            </figure>
+        {% endif %}
+
+        {% if varimage %}
+            {% for p in varimage %}
+            <figure class="border-radius-0">
+                <a class="popup-image" href="{{p.images.url}}">
+                    <img src="{{p.images.url}}" alt="product image" />
+                </a>
+            </figure>
+            {% endfor %}                              
+        {% else %}
+            {% for p in pimage %}
+                <figure class="border-radius-0">
+                    <a class="popup-image" href="{{p.image.url}}">
+                        <img src="{{p.images.url}}" alt="product image" loading="eager" />
+                    </a>
+                </figure>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+    <!-- THUMBNAILS -->
+    <div class="slider-nav-thumbnails">
+
+        {% if variant %}
+            <div><img src="{{main_image.image.url}}" alt="product image" /></div>
+        {% else %}
+            <div><img src="{{product.image.url}}" alt="product image" /></div>
+        {% endif %}
+
+        {% if varimage %}
+            {% for p in varimage %}
+                <div><img src="{{p.images.url}}" alt="product image" /></div>
+            {% endfor %}
+        {% else %}
+            {% for p in pimage %}
+                <div><img src="{{p.images.url}}" alt="product image" /></div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<!-- End Gallery -->

@@ -1,0 +1,70 @@
+
+<style>
+  .nav-pills-custom .nav-link {
+    color: #aaa;
+    background: #fff;
+    position: relative;
+  }
+  
+  .nav-pills-custom .nav-link.active {
+    color: #45b649;
+    background: #fff;
+  }
+  
+  @media (min-width: 992px) {
+    .nav-pills-custom .nav-link::before {
+        content: '';
+        display: block;
+        border-top: 8px solid transparent;
+        border-left: 10px solid #fff;
+        border-bottom: 8px solid transparent;
+        position: absolute;
+        top: 50%;
+        right: -10px;
+        transform: translateY(-50%);
+        opacity: 0;
+    }
+  }
+  
+  .nav-pills-custom .nav-link.active::before {
+    opacity: 1;
+  }
+  
+  body {
+    min-height: 100vh;
+  }
+</style>
+<!-- START vendor sidebar -->
+<div class="col-md-3 p-3">
+    <!-- Tabs nav -->
+    <div class="nav flex-column nav-pills nav-pills-custom" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+      <a class="nav-link mb-3 p-3 shadow {% if request.path == '/vendor/dashboard/' %} active {% endif %}"href="{% url 'vendor:vendor-dashboard' %}"aria-selected="false">
+          <i class="fal fa-shopping-bag mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Dashboard</span></a>
+
+      <a class="nav-link mb-3 p-3 shadow {% if request.path == '/vendor/products/' %} active {% endif %}" href="{% url 'vendor:vendor_product' %}" aria-selected="false">
+          <i class="fa fa-shopping-bag mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Products</span></a>
+
+      <a class="nav-link mb-3 p-3 shadow {% if request.path == '/vendor/operating-hours/' %} active {% endif %}" href="{% url 'vendor:operating-hours' %}" aria-selected="false">
+          <i class="fa fa-user mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Operating Hours</span></a>
+
+      <a class="nav-link mb-3 p-3 shadow {% if request.path == '/vendor/profile/' %} active {% endif %}" href="{% url 'vendor:vendor_profile' %}" aria-selected="false">
+          <i class="fa fa-user mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Profile</span></a>
+
+      <a class="nav-link mb-3 p-3 shadow" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+          <i class="fa fa-star mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Reviews</span></a>
+
+      <a class="nav-link mb-3 p-3 shadow" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+          <i class="fa fa-phone mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Contact</span></a>
+
+      <a class="nav-link mb-3 p-3 shadow" href="{% url 'userauths:sign_out' %}"  aria-selected="false">
+          <i class="fa fa-sign-out mr-2"></i>
+          <span class="font-weight-bold small text-uppercase">Sign Out</span></a>
+  </div>
+  </div>
+<!-- END vendor sidebar -->

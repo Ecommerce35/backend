@@ -1,0 +1,18 @@
+{% extends 'partials/base4.html' %}
+{% load static %}
+
+{% block content %}
+
+  <h2>Person Form</h2>
+
+  <form method="post" enctype="multipart/form-data" id="personForm" data-regions-url="{% url 'address:ajax_load_regions' %}" novalidate>
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+    </table>
+    <button type="submit">Save</button>
+    <a href="#">Nevermind</a>
+  </form>
+
+{% endblock %}
+

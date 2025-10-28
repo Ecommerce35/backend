@@ -1,0 +1,18 @@
+{% load static %}
+
+{% if messages %}
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+        toastr.options = { "closeButton": true, "debug": false, "newestOnTop": true,
+            "progressBar": true, "positionClass": "toast-bottom-right", "preventDuplicates": true,
+            "onclick": null, "showDuration": "100", "hideDuration": "1000", "timeOut": "10000",
+            "extendedTimeOut": "1000", "showEasing": "swing", "hideEasing": "linear",
+            "showMethod": "fadeIn", "hideMethod": "fadeOut" };
+        {% autoescape off %}
+            {% for msg in messages %}
+                toastr.{{ msg.tags }}("{{ msg }}");
+            {% endfor %}
+        {% endautoescape %}
+    });
+</script>
+{% endif %}
