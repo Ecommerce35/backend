@@ -1,0 +1,349 @@
+{% extends 'partials/base.html' %}
+{% block title %}Products by vendor{% endblock title %}
+{% load static %}
+{% block content %}
+<style>
+.nav-pills-custom .nav-link {
+  color: #aaa;
+  background: #fff;
+  position: relative;
+}
+
+.nav-pills-custom .nav-link.active {
+  color: #45b649;
+  background: #fff;
+}
+
+@media (min-width: 992px) {
+  .nav-pills-custom .nav-link::before {
+      content: '';
+      display: block;
+      border-top: 8px solid transparent;
+      border-left: 10px solid #fff;
+      border-bottom: 8px solid transparent;
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      transform: translateY(-50%);
+      opacity: 0;
+  }
+}
+
+.nav-pills-custom .nav-link.active::before {
+  opacity: 1;
+}
+
+body {
+  min-height: 100vh;
+}
+</style>
+<!-- START vendor cover image -->
+  <div class="carousel slide shadow">
+      <div class="carousel-inner">
+          <div class="carousel-item active">
+              <img src="{{ vendor.profile.cover_image.url }}" class="d-block" height="320px" width="100%" style="filter: brightness(60%);" alt="vendor cover image">
+              <div class="carousel-caption">
+                <img src="{{ vendor.profile.profile_image.url }}" class="rounded-pill mb-2" width="20%" alt="vendor profile image">
+                <h2 class="text-white fw-bold">{{ vendor.name }}</h2>
+                {% if vendor.is_open %}
+                  <span class="badge bg-success border border-success-subtle text-success-emphasis rounded-pill py-2 px-4">Open until {% for today in today_operating_hours %} {{today.to_hour}} {% endfor %} </span>
+                {% else %}
+                  <span class="badge bg-danger border border-danger-subtle text-danger-emphasis rounded-pill py-2 px-4">Close</span>
+                {% endif %}
+                {% if vendor.user_profile.address %}<p><i class="bi bi-geo-alt"></i> {{ vendor.user_profile.address }}</p>{% endif %}
+                
+              </div>
+          </div>
+      </div>
+  </div>
+<!-- END vendor cover image -->
+  <div class="container-fluid light-bg-s">
+    <div class="row">
+      <!-- START vendor sidebar -->
+      <div class="col-md-3 p-3">
+        <div class="">
+          <!-- Tabs nav -->
+          <div class="nav flex-column nav-pills nav-pills-custom" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <a class="nav-link mb-3 p-3 shadow active" id="v-pills-products-tab" data-bs-toggle="pill" href="#v-pills-products" role="tab" aria-controls="v-pills-products" aria-selected="false">
+                  <i class="fal fa-shopping-bag mr-2"></i>
+                  <span class="font-weight-bold small text-uppercase">Products</span></a>
+
+              <a class="nav-link mb-3 p-3 shadow" id="v-pills-hours-tab" data-bs-toggle="pill" href="#v-pills-hours" role="tab" aria-controls="v-pills-hours" aria-selected="false">
+                  <i class="fa fa-clock mr-2"></i>
+                  <span class="font-weight-bold small text-uppercase">Operating Hours</span></a>
+
+              <a class="nav-link mb-3 p-3 shadow" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                  <i class="fa fa-star mr-2"></i>
+                  <span class="font-weight-bold small text-uppercase">Reviews</span></a>
+
+              <a class="nav-link mb-3 p-3 shadow" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                  <i class="fa fa-phone mr-2"></i>
+                  <span class="font-weight-bold small text-uppercase">Contact</span></a>
+          </div>
+        </div>
+      </div>
+      
+    <!-- END vendor sidebar -->
+        <div class="col-md-9">
+          <div>
+            {% comment %} {% if operating_hours %}
+              <div class="dropdown-center text-center">
+                <button class="btn btn-sm btn-secondary dropdown-toggle rounded-pill px-4 mt-20" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div class="row" style="align-items: center;">
+                    <div class="col"><b>Today</b></div>
+                    <div class="col">
+                      {% for today in today_operating_hours %}
+                        {% if today.is_closed %}
+                          <b class="text-danger">Closed</b>
+                        {% else %}
+                          {{ today.from_hour }} - {{ today.to_hour }}<br>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </button>
+                <ul class="dropdown-menu">
+                  {% for hour in operating_hours %}
+                    <li>
+                      <a class="dropdown-item">
+                        <div class="row">
+                          <div class="col"><b>{{ hour }}</b></div>
+                          <div class="col">{% if hour.is_closed %}<b class="text-danger">Closed</b>{% else %}{{ hour.from_hour }} - {{ hour.to_hour }}{% endif %}</div>
+                        </div>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %} {% endcomment %}
+          <!-- Tabs content -->
+          <div class="tab-content" id="v-pills-tabContent">
+            <div class="tab-pane fade shadow rounded bg-white show active p-2" id="v-pills-products" role="tabpanel" aria-labelledby="v-pills-products-tab">
+                <!-- trending-product-area-start -->
+                <section class="trending-product-area pt-25 pb-15">
+                  <div class="custom-conatiner">
+                      <div class="row">
+                          <div class="col-xl-12">
+                              <div class="d-flex justify-content-between mb-30">
+                                  <div class="section__title section__title-2">
+                                      <h5 class="">Our Products({{vendor.product.count}})</h5>
+                                  </div>
+                                  {% comment %} <div class="d-flex text-align-center">
+                                  <h5 style="border-radius: 10px;width: 120px; text-align: center;" class="py-2 text-white bg-info shadow">Follow</h5>
+                                  </div> {% endcomment %}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row">
+                          {% for p in products %}
+                          <div class="col-sm-6 col-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2 px-1">
+                              <div class="product__item product__item-2 b-radius-2 mb-20">
+                                  <div class="product__thumb fix">
+                                      <div class="product-image w-img">
+                                          <a href="{{p.get_absolute_url}}">
+                                              <img src="{{p.image.url}}" alt="product">
+                                          </a>
+                                      </div>
+                                      <div class="product__offer">
+                                      <span class="discount">{{p.get_percentage|floatformat:0}}%</span>
+                                      </div>
+                                  </div>
+                                  <div class="product__content product__content-2">
+                                      <h6><a href="{{p.get_absolute_url}}">{{p.title|title|truncatechars:15}}</a></h6>
+                                      <div class="rating">
+                                          <span>({{ p.reviews.all.count }} review)</span>
+                                      </div>
+                                      <div class="price">
+                                          <span>₵{{p.price}}</span>
+                                      </div>
+                                  </div>
+                                  <div class="product__add-cart text-center">
+                                      <a href="{{p.get_absolute_url}}" class="cart-btn-3 product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
+                                      View
+                                      </a>
+                                  </div>
+                              </div>
+                          </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  </section>
+              <!-- trending-product-area-end -->
+          </div>
+
+          <!-- OPERATION HOURS SECTION -->
+          <!-- OPERATION HOURS SECTION -->
+            <div class="tab-pane fade shadow rounded bg-white p-2"  id="v-pills-hours" role="tabpanel" aria-labelledby="v-pills-hours-tab">
+                <h4 class="font-italic mb-4 text-center">Operating Hours</h4>
+                <button class="btn btn-sm btn-secondary rounded-pill px-4 my-3">
+                    <div class="row" style="">
+                      <div class="col"><b>Today</b></div>
+                      <div class="col">
+                        {% for today in today_operating_hours %}
+                          {% if today.is_closed %}
+                            <b class="text-danger">Closed</b>
+                          {% else %}
+                            {{ today.from_hour }} - {{ today.to_hour }}<br>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                </button>
+                <ul class="">
+                    {% for hour in operating_hours %}
+                      <li class="border-top py-2">
+                        <a class="dropdown-item">
+                          <div class="row">
+                            <div class="col"><b>{{ hour }}</b></div>
+                            <div class="col">{% if hour.is_closed %}<b class="text-danger">Closed</b>{% else %}{{ hour.from_hour }} - {{ hour.to_hour }}{% endif %}</div>
+                          </div>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+            </div>
+            
+            <!-- REVIEWS SECTION -->
+            <!-- REVIEWS SECTION -->
+            <div class="tab-pane fade shadow rounded bg-white p-2" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                <h4 class="font-italic mb-4">Reviews</h4>
+                <div class="container">
+                    <div class="row session-title">
+                        <h2>Happy Customers</h2>
+    
+                    </div>
+    
+                    <div class="row ro-clo">
+                        <div data-anijs="if: scroll, on: window, do: bounceInLeft animated, before: scrollReveal" class="col-12  col-md-6 col-lg-4">
+                            <div class="shado-2 card-b">
+                                <p>Classic Aqua water purify is good.Because its cure our purify that is called  health and gives good life. I suggest classic aqua for its best purify of water</p>
+                            </div>
+                            <div class="cust-det row">
+                                <div class="col-sm-3 col-3 img-circl">
+                                    <img alt="" src="assets/images/testimonial/member-01.jpg">
+                                </div>
+                                <div class="col-sm-5 col-5 an-mtc no-padding">
+                                    <b>Sarath Ali</b>
+                                    <p>(Sales Agent)</p>
+                                </div>
+                                <div class="col-sm-4 col-4 star-par">
+                                    <ul class="stars">
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12  col-md-6 col-lg-4">
+                            <div class="shado-2 card-b">
+                                <p> have use this product at my home last 1 and half year of this. This product quality is good.Its good quality product for use it can improve water Quality.
+                                </p>
+                            </div>
+                            <div class="cust-det row">
+                                <div class="col-sm-3 col-3 img-circl">
+                                    <img alt="" src="assets/images/testimonial/member-02.jpg">
+                                </div>
+                                <div class="col-sm-5 col-5 an-mtc no-padding">
+                                    <b>Binny Aderson</b>
+                                    <p>(Sales Agent)</p>
+                                </div>
+                                <div class="col-sm-4  col-4 star-par">
+                                    <ul class="stars">
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-anijs="if: scroll, on: window, do: bounceInRight animated, before: scrollReveal" class="col-12  col-md-6 col-lg-4">
+                            <div class="shado-2 card-b">
+                                <p>Very essensial product.it is clean and helthy water is mutually most important so that acqa is fufil its quality.our life now a days very tressful and restless</p>
+                            </div>
+                            <div class="cust-det row">
+                                <div class="col-sm-3 col-3 img-circl">
+                                    <img alt="" src="assets/images/testimonial/member-03.jpg">
+                                </div>
+                                <div class="col-sm-5 col-5 an-mtc no-padding">
+                                    <b>Arjun Samluel</b>
+                                    <p>(Sales Agent)</p>
+                                </div>
+                                <div class="col-sm-4 col-4 star-par">
+                                    <ul class="stars">
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                        <li><i class="fa fa-star"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>       
+            </div>
+
+            <!-- CONTACT US SECTION -->
+            <!-- CONTACT US SECTION -->
+            <div class="tab-pane fade shadow rounded bg-white p-2" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                <h4 class="font-italic mb-4">Contact us</h4>
+                <div class="news-share mt-20 text-center mb-20">
+                    {% comment %} <h6 class="tag-title mb-25">Social Share</h6> {% endcomment %}
+                    <a href="{{ post.author.facebook_url }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="{{ post.author.twitter_url }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="{{ post.author.instagram_url }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="{{ post.author.linkedin_url }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                 </div>
+                <section class="contact-us-single">
+                    <div class="row no-margin">
+                        <div class="col-sm-6 no-padding">
+                             <iframe style="width:100%" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d249759.19784092825!2d79.10145254589841!3d12.009924873581818!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1448883859107"  height="480" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        </div>
+                        <div  class="col-sm-6 cop-ck">
+                        {% include 'alerts/alert.html' %}
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="row cf-ro">
+                                    <div  class="col-sm-3"><label>Name :</label></div>
+                                    <div class="col-sm-8"><input type="text" placeholder="Enter Name" name="name" class="form-control input-sm" required ></div>
+                                </div>
+                                <div  class="row cf-ro">
+                                    <div  class="col-sm-3"><label>Email Address :</label></div>
+                                    <div class="col-sm-8"><input type="text" name="email" placeholder="Enter Email Address" class="form-control input-sm" required ></div>
+                                </div>
+                                 <div  class="row cf-ro">
+                                    <div  class="col-sm-3"><label>Mobile Number:</label></div>
+                                    <div class="col-sm-8"><input type="text" name="mobile" placeholder="Enter Mobile Number" class="form-control input-sm" required ></div>
+                                </div>
+                                 <div  class="row cf-ro">
+                                    <div  class="col-sm-3"><label>Enter  Message:</label></div>
+                                    <div class="col-sm-8">
+                                      <textarea rows="5" name="message" placeholder="Enter Your Message" class="form-control input-sm" required></textarea>
+                                    </div>
+                                </div>
+                                 <div  class="row cf-ro">
+                                    <div  class="col-sm-3"><label></label></div>
+                                    <div class="col-sm-8">
+                                     <button type="submit" class="btn btn-primary btn-sm">Send Message</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+          <!-- Demo header-->
+          </div>
+
+        </div>
+        
+    </div>
+  </div>
+{% endblock content %}

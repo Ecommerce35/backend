@@ -1,0 +1,205 @@
+{% extends 'partials/base.html' %}
+{% block title %}Dashboard | {{request.user.username}}{% endblock title %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+
+{% load static %}
+{% block content %}
+
+<style>
+    .card {
+        box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+        margin-bottom: 1rem;
+    }
+    .card {
+        position: relative;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0 solid rgba(0, 0, 0, .125);
+        border-radius: .25rem;
+    }
+    .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        padding: 1rem;
+    }
+    .card-header {
+        padding: .75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0, 0, 0, .03);
+        border-bottom: 0 solid rgba(0, 0, 0, .125);
+    }
+    .card-body {
+        -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1.25rem;
+    }
+</style>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="">
+                <div class="grid">
+                    {% if count >= 4 %}
+                    <div style="border: dotted;" class="card">
+                        <div style="place-content: center;" class="card-header">
+                            <h5 class="m-0">Add new address</h5>
+                        </div>
+                        <div class="card-body text-muted">
+                            <span class="align-items-center" style="font-size: 6.79rem;">
+                               <p>Can have a maximum of four addresses, you can only edit or delete</p>
+                            </span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="border: dotted;" class="card">
+                        <div class="card-header">
+                            <h5 class="m-0">Add new address</h5>
+                        </div>
+                        <div class="card-body text-muted">
+                            <span class="align-items-center" style="font-size: 6.79rem;">
+                                <a href="{% url 'address:add_address' %}">
+                                    <i class="icon-plus"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+
+                    {% endif %}
+
+                    {% for a in address %}
+                    <div class="card" id="address-{{a.id}}">
+                        <div id="default-address-{{a.id}}" class="card-header default-address">
+                            {% if a.status == True %}
+                            <h5 class="m-0 iconic">
+                                <i class="icon-check text-success">Default</i>
+                            </h5>
+                            {% else %}
+                             <span class="" style="cursor: pointer;" onclick="setDefaultAddress({{a.id}})">Make default</span> 
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <strong>{{a.first_name}} &nbsp;{{a.last_name}}</strong> <br>
+                            {{a.mobile}} <br>
+                            {{a.email}} <br>
+                            {{a.location.town}} <br>
+                            {{a.location.region}} <br>
+                            {{a.location.country}} <br>
+                            <div><span><a href="{% url 'address:edit_address' a.id %}">Edit</a> | <a href="#" onclick="deleteAddress({{a.id}})">Delete</a></span></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div>
+
+            {% if recently_viewed %}
+                <div class="bg-light">
+                    <div class="container">
+                        <ul class="nav nav-pills nav-big nav-border-anim justify-content-center" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active">Previously viewed product{{recently_viewed|pluralize}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content tab-content-carousel">
+                            <div class="tab-pane p-0 fade show active" id="products-trending-tab" role="tabpanel" aria-labelledby="products-trending-link">
+                                <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                                    data-owl-options='{
+                                        "nav": false, 
+                                        "dots": false,
+                                        "margin": 10,
+                                        "loop": false,
+                                        "responsive": {
+                                            "0": {
+                                                "items":2
+                                            },
+                                            "480": {
+                                                "items":2
+                                            },
+                                            "768": {
+                                                "items":3
+                                            },
+                                            "992": {
+                                                "items":5
+                                            },
+                                            "1200": {
+                                                "items":6,
+                                                "nav": true
+                                            }
+                                        }
+                                    }'>
+
+                                    {% for p in recently_viewed %}
+                                    <div class="product">
+                                        <figure class="product-media">
+                                            <span class="product-label label-sale">Sale</span>
+                                            <a href="{{p.get_absolute_url}}">
+                                                <img src="{{p.image.url}}" alt="Product image" class="product-image">
+                                            </a>
+                                        </figure><!-- End .product-media -->
+
+                                        <div class="product-body">
+                                            <div class="product-cat">
+                                                <a href="{{p.sub_category.get_absolute_url}}">{{p.sub_category.title}}</a>
+                                            </div><!-- End .product-cat -->
+                                            <h3 class="product-title"><a href="{{p.get_absolute_url}}">{{p.title|truncatechars:25}}</a></h3><!-- End .product-title -->
+                                            <div class="product-price">
+                                                <span class="new-price">GHS{{p.price}}</span>
+                                                <span class="old-price">Was GHS{{p.old_price}}</span>
+                                            </div><!-- End .product-price -->
+                                        </div><!-- End .product-body -->
+                                    </div><!-- End .product -->
+                                    {% endfor %}
+                                </div><!-- End .owl-carousel -->
+                            </div><!-- .End .tab-pane -->
+                          
+                        </div><!-- End .tab-content -->
+                    </div><!-- End .container -->
+                </div><!-- End .bg-light pt-4 pb-4 -->
+                {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function setDefaultAddress(addressId) {
+        console.log("Hiiiiiiiiiii")
+        fetch(`/set-default-address/${addressId}/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log(response)
+                //document.querySelectorAll('.default-address').forEach(el => el.innerHTML=``);
+                
+                //document.querySelectorAll('.default-address').forEach(el => el.innerHTML=`
+                //<span class="" style="cursor: pointer;" onclick="setDefaultAddress({{a.id}})">Make default</span> 
+                //`);
+
+                //document.getElementById(`default-address-${addressId}`).innerHTML=`<h5 class="m-0 iconic">
+                //    <i class="icon-check text-success">Default</i>
+                //</h5>`;
+                window.location.reload();
+
+            }
+        })
+    }
+</script>
+
+{% endblock %}

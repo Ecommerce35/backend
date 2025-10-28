@@ -1,0 +1,29 @@
+ <!-- Carousel skeleton -->
+ <template id="skeleton-slide-template"> 
+    <div class="intro-slide skeleton">
+        <div class="container intro-content">
+            <div class="row">
+                <div class="col-auto offset-lg-3 intro-col">
+                    <div class="skeleton skeleton-text" style="height: 1.5rem; width: 50%;"></div>
+                    <div class="skeleton skeleton-text" style="height: 3rem; width: 100%; margin-top: 1rem;"></div>
+                    <div class="skeleton skeleton-text" style="height: 2rem; width: 30%; margin-top: 1rem;"></div>
+                    <div class="skeleton skeleton-text" style="height: 2rem; width: 60%; margin-top: 2rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<div class="col-lg-8 col-xl-6 shadow-sm">
+    <div class="intro-slider-container">
+        <div id="slider-carousel" class="intro-slider owl-carousel owl-simple owl-nav-inside" data-toggle="owl" data-owl-options='{
+            "items": 1,
+            "nav": true,
+            "dots": true,
+            "loop": true
+        }'>
+            <!-- Skeleton slides will be inserted here -->
+        </div>
+    </div>
+</div>
+<!-- end carousel skeleton -->

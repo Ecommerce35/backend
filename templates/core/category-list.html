@@ -1,0 +1,126 @@
+{% extends 'partials/base.html' %}
+{% block title %}Mian Category{% endblock title %}
+{% load static %}
+{% block content  %}
+    <main class="main bg-light">
+        <div class="page-header mt-30 mb-75">
+            <div class="container">
+                <div class="archive-header">
+                    <div class="row align-items-center">
+                        <div class="col-xl-3">
+                            <h1 class="mb-15">Main Category</h1>
+                            <div class="breadcrumb">
+                                <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                                <span></span>Main Category
+                            </div>
+                        </div>
+                        <div class="col-xl-9 text-end d-none d-xl-block">
+                            <ul class="tags-list">
+                                {% for t in tag %}
+                                <li class="hover-up">
+                                    <a href="{% url 'core:tags' t.slug %}"><i class="fi-rs-cross mr-10"></i>{{t.name}}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-content mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="shop-product-fillter mb-20 pr-30">
+                            <div class="totall-product">
+                                <h2>
+                                    ({{main_categories.count}}) {% if main_categories.count > 1 %}Categories {% else %} Category{% endif %}
+                                </h2>
+                            </div>
+                            <div class="sort-by-product-area">
+                                <div class="sidebar-widget-2 widget_search mb-20">
+                                    <div class="search-form">
+                                        <form action="{% url 'core:search_category' %}" method="GET">
+                                            <input type="text" name="q" placeholder="Search…" required>
+                                            <button type="submit"><i class="fi-rs-search"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="col">
+                            <div class="loop-grid">
+                                <div class="">
+                                    <div class="row col-12">
+                                    {% for c in main_category %}
+                                        <article class="col-xl-3 col-lg-4 col-md-4 col-md-6 text-center hover-up mb-10 animated shadow-sm rounded-3">
+                                            <div class="smblog-thum">
+                                                <a href="{% url 'core:maincategory_list' c.mcid %}">
+                                                    <img class="border-radius-15" src="{{ c.image.url }}" alt="" />
+                                                </a>
+                                                <div class="blog-tag blog-tag-2">
+                                                    <a class="entry-meta meta-2">New</a>
+                                                </div>
+                                            </div>
+                                            <div class="entry-content-2">
+                                                <h6 class="mb-10 font-sm"><a class="entry-meta post-date text-muted" href="{% url 'core:maincategory_list' c.mcid %}">{{c.category_set.all.count}} {% if c.category_set.all.count > 1 %}Sub-categories {% else %}Sub-category{% endif %}</a></h6>
+                                                <h4 class="post-title mb-15">
+                                                    <a href="{% url 'core:maincategory_list' c.mcid %}">{{c.title|title}}</a>
+                                                </h4>
+                                                <div class="entry-meta font-xs color-grey mt-10 pb-10">
+                                                    <div class="post-date">
+                                                        <span class="post-date mr-10">{{c.date|date}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </article>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% include 'alerts/alert.html' %}
+                            <div class="row">
+                                <!--pagination-->
+                                <div class="col-xl-12">
+                                    <div class="basic-pagination text-center pt-30 pb-30">
+                                        {% if main_category.has_other_pages %}
+                                        <ul class="list-inline">
+                                            {% if main_category.has_previous %}
+                                            <li>
+                                                <a href="?page={{main_category.previous_page_number}}">
+                                                    <i class="fal fa-angle-double-left"></i>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% for i in main_category.paginator.page_range %}
+                                                {% if main_category.number == i %}
+                                                <li class="active">
+                                                    <a href="">{{i}}</a>
+                                                </li>
+                                                {% else %}
+                                                <li class="">
+                                                    <a href="?page={{i}}">{{i}}</a>
+                                                </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if main_category.has_next %}
+                                            <li>
+                                                <a href="?page={{main_category.next_page_number}}">
+                                                    <i class="fal fa-angle-double-right"></i>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!--/-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  {% endblock %}

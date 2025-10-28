@@ -1,0 +1,93 @@
+{% load static %}
+{% load humanize %}
+{% if totalcartitems %}
+<!-- cart-area-start -->
+<section class="cart-area pt-120 pb-120" id="cart-list">
+    <div class="container">
+       <div class="row">
+          <div class="col-12">
+              <div class="table-content table-responsive">
+                 <table class="table">
+                       <thead>
+                          <tr>
+                             <th class="product-thumbnail">Images</th>
+                             <th class="cart-product-name">Product</th>
+                             <th class="product-price">Unit Price</th>
+                             <th class="product-quantity">Quantity</th>
+                             <th class="product-subtotal">Total</th>
+                             <th class="product-remove">Remove</th>
+                          </tr>
+                       </thead>
+                       <tbody>
+                          {% for product_id, item in cart_data.items %}
+                          <tr>
+                             <td class="product-thumbnail"><a href="{% url 'core:product-detail' item.pid %}"><img src="{{item.image}}" alt=""></a></td>
+                             <td class="product-name"><a href="{% url 'core:product-detail' item.pid %}">{{item.title}}</a></td>
+                             <td class="product-price"><span class="amount">₵{{item.price|floatformat:2|intcomma}}</span></td>
+                             <td class="product-quantity">
+                                   <div class="cart-plus-minus"><input  min="1" value="{{item.qty}}" type="number" class="qty-input product-qty-{{ product_id }}"><div class="dec qtybutton">-</div><div class="inc qtybutton">+</div></div>
+                             </td>
+                             <td class="product-subtotal" data-title="Price"><span class="amount">₵{% widthratio item.price 1 item.qty|intcomma %}</span></td>
+                             <td class="">
+                                <button class="action text-body delete-item" data-item="{{ product_id }}"><i class="fa fa-times"></i></button> <br> <br>
+                                <button style="border: none;background: none;" class="action text-body update-item" data-item="{{ product_id }}"><i class="fi-rs-refresh"></i></button>
+                          </td>
+                          </tr>
+                          {% endfor %}
+                       </tbody>
+                 </table>
+              </div>
+              <div class="row">
+                 <div class="col-12">
+                       <div class="coupon-all">
+                          
+                          <div class="coupon2">
+                             <button class="tp-btn-h1" name="update_cart" >Update cart</button>
+                          </div>
+                       </div>
+                 </div>
+              </div>
+              <div class="row justify-content-end">
+                 <div class="col-md-5">
+                       <div class="cart-page-total">
+                          <h2>Cart totals</h2>
+                          <ul class="mb-20">
+                             <li>Subtotal <span>₵{{cart_total_amount}}</span></li>
+                             <li>Total <span>₵{{cart_total_amount}}</span></li>
+                             <img class="wow fadeIn animated w-100"  src="{% static 'assets/imgs/theme/payment-method.png' %}" alt="" />                  
+                             <img class="wow fadeIn animated w-100"  src="{% static 'assets/imgs/theme/payment-method-2.png' %}" alt="" />
+                          </ul>
+                          <a class="tp-btn-h1" href="{% url 'core:checkout' %}">Proceed to checkout</a>
+                       </div>
+                 </div>
+              </div>
+          </div>
+       </div>
+    </div>
+ </section>
+ <!-- cart-area-end -->
+ {% else %}
+ <!-- error-area-start -->
+ <div class="error-area pt-80 pb-80">
+   <div class="container">
+       <div class="row">
+           <div class="col-lg-12">
+               <div class="error-info text-center">
+                   <div class="error-image text-center mb-50">
+                       <img src="{% static 'assets5/img/banner/404.png' %}" alt="">
+                   </div>
+                   <div class="error-content">
+                       <h5>No Cart Item Found</h5>
+                       <p>Sorry {% if request.user.is_authenticated %} <strong>{{request.user.username}}</strong> {% else %} </strong>Dear Custommer</strong> {% endif %}, Your cart is empty. Please return to Homepage.</p>
+                       <div class="error-button">
+                           <a href="{% url 'core:index' %}" class="error-btn">Shop More!</a>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>
+<!-- error-area-start -->
+
+ {% endif %}

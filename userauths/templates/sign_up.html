@@ -1,0 +1,474 @@
+{% extends 'partials/base-login.html' %}
+{% block title %}Login{% endblock title %}
+
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+
+    .b-example-divider {
+      height: 3rem;
+      background-color: rgba(0, 0, 0, .1);
+      border: solid rgba(0, 0, 0, .15);
+      border-width: 1px 0;
+      box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+    }
+
+    .b-example-vr {
+      flex-shrink: 0;
+      width: 1.5rem;
+      height: 100vh;
+    }
+
+    .bi {
+      vertical-align: -.125em;
+      fill: currentColor;
+    }
+
+    .nav-scroller {
+      position: relative;
+      z-index: 2;
+      height: 2.75rem;
+      overflow-y: hidden;
+    }
+
+    .nav-scroller .nav {
+      display: flex;
+      flex-wrap: nowrap;
+      padding-bottom: 1rem;
+      margin-top: -1px;
+      overflow-x: auto;
+      text-align: center;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .form-signin {
+        max-width: 330px;
+        padding: 15px;
+      }
+      
+      .form-signin .form-floating:focus-within {
+        z-index: 2;
+      }
+      
+      .form-signin input[type="email"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      
+      .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+
+      .input-group {
+        position: relative;
+        margin: 30px 0;
+        border-bottom: 2px solid #000;
+      }
+      .input-group label {
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #000;
+        pointer-events: none;
+        transition: 0.5s;
+      }
+      .input-group input {
+        width: 320px;
+        height: 40px;
+        font-size: 16px;
+        color: #000;
+        padding: 0 5px;
+        background: transparent;
+        border: none;
+        outline: none;
+      }
+      .input-group input:focus ~ label,
+      .input-group input:valid ~ label {
+        top: -5px;
+      }
+      .remember {
+        margin: -5px 0 15px 5px;
+      }
+      .remember label {
+        color: #000;
+        font-size: 14px;
+      }
+      .remember label input {
+        accent-color: #0ef;
+      }
+      {% comment %} button {
+        position: relative;
+        width: 100%;
+        height: 40px;
+        background: #0ef;
+        box-shadow: 0 0 10px #0ef;
+        font-size: 16px;
+        color: #000;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 30px;
+        border: none;
+        outline: none;
+      } {% endcomment %}
+      .signUp-link {
+        font-size: 14px;
+        text-align: center;
+        margin: 15px 0;
+      }
+      .signUp-link p {
+        color: #fff;
+      }
+      .signUp-link p a {
+        color: #0ef;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .signUp-link p a:hover {
+        text-decoration: underline;
+      }
+  </style>
+    <div class="container">
+      <input type="hidden" readonly id="longitude">
+      <input type="hidden" readonly id="latitude">
+        <div class="row">
+            <div class="col-xl-8 col-lg-10 col-md-12 m-auto">
+                <div class="row">
+                    <div class="col-lg-6 pr-30 d-none d-lg-block">
+                        <img class="border-radius-15" src="{% static 'assets/imgs/page/login-1.png' %}" alt="" />
+                    </div>
+                    <div class="col-md-5 my-5 p-5">
+                      <div style="place-content: center;" class="">
+                        <h4>Sign up</h4>
+                        <div id="formMessages"></div>
+                        <form id="signup" autocomplete="off" action="{% url 'userauths:sign_up' %}" method="POST">
+                          <input type="hidden" name="longitude" readonly id="longitude__">
+                          <input type="hidden" name="latitude" readonly id="latitude__">
+                          {% csrf_token %}
+                          <div class="input-group">
+                            <input name="first_name" type="text" id="first_name" required/>
+                            <label for="">First name</label>
+                            <small></small>
+                          </div>
+                          <input type="hidden" name="next" value="{{ next }}">
+                          <div class="input-group">
+                            <input name="last_name" type="text" id="last_name" required/>
+                            <label for="">Last name</label>
+                            <small></small>
+                          </div>
+                          <div class="input-group">
+                            <input name="email" type="email" id="email" required/>
+                            <label for="">Email</label>
+                            <small></small>
+                          </div>
+                          <div class="input-group">
+                            <input name="phone" type="tel" id="phone" required/>
+                            <label for="">Phone number</label>
+                            <small></small>
+                          </div>
+                          <div class="input-group">
+                            <input name="password" type="password" id="password" required/>
+                            <label for="">Password</label>
+                            <small></small>
+                          </div>
+                          <div class="input-group">
+                            <input name="confirm_password" type="password" id="confirm_password" required/>
+                            <label for="">Cofirm password</label>
+                            <small></small>
+                          </div>
+                          <label>
+                            <input type="checkbox" id="showPassword"> Show Password
+                          </label>
+                          <hr>
+                          <button class="btn btn-outline-primary w-100" type="submit">Sign up</button>
+                        </form>
+                        <br>
+                        <p>Have an account? <a href="{% url 'userauths:email' %}">Sign in</a></p>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+      document.addEventListener("DOMContentLoaded", function () {
+        if (navigator.geolocation) {
+           navigator.geolocation.getCurrentPosition((position) => {
+              const userLocation = {
+                 lat: position.coords.latitude,
+                 lng: position.coords.longitude,
+                 accu: position.coords.accuracy,
+              };
+
+              // Set latitude and longitude in hidden input fields
+              document.getElementById('latitude__').value = userLocation.lat.toFixed(6);
+              document.getElementById('longitude__').value = userLocation.lng.toFixed(6);
+           }, (error) => {
+              console.error('Error getting geolocation:', error.message);
+           });
+        }
+     });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('signup');
+        const firstnameEl = document.querySelector('#first_name');
+        const lastnameEl = document.querySelector('#last_name');
+        const emailEl = document.querySelector('#email');
+        const phoneEl = document.querySelector('#phone');
+        const passwordEl = document.querySelector('#password');
+        const confirmPasswordEl = document.querySelector('#confirm_password');
+        const formMessages = document.getElementById('formMessages'); // Add this line to get the formMessages element
+    
+        // Function to check first name validity
+        const checkFirstName = () => {
+            let valid = false;
+            const firstname = firstnameEl.value.trim();
+            if (!isRequired(firstname)) {
+                showError(firstnameEl, 'First name cannot be blank.');
+            } else {
+                showSuccess(firstnameEl);
+                valid = true;
+            }
+            return valid;
+        };
+    
+        // Function to check last name validity
+        const checkLastName = () => {
+            let valid = false;
+            const lastname = lastnameEl.value.trim();
+            if (!isRequired(lastname)) {
+                showError(lastnameEl, 'Last name cannot be blank.');
+            } else {
+                showSuccess(lastnameEl);
+                valid = true;
+            }
+            return valid;
+        };
+    
+        // Function to check email validity
+        const checkEmail = () => {
+            let valid = false;
+            const email = emailEl.value.trim();
+            if (!isRequired(email)) {
+                showError(emailEl, 'Email cannot be blank.');
+            } else if (!isEmailValid(email)) {
+                showError(emailEl, 'Email is not valid.');
+            } else {
+                showSuccess(emailEl);
+                valid = true;
+            }
+            return valid;
+        };
+    
+        // Function to check phone number validity
+        const checkPhone = () => {
+            let valid = false;
+            const phone = phoneEl.value.trim();
+            if (!isRequired(phone)) {
+                showError(phoneEl, 'Phone number cannot be blank.');
+            } else if (!isPhoneValid(phone)) {
+                showError(phoneEl, 'Phone number is not valid.');
+            } else {
+                showSuccess(phoneEl);
+                valid = true;
+            }
+            return valid;
+        };
+    
+        // Function to check password validity
+        const checkPassword = () => {
+            let valid = false;
+            const password = passwordEl.value.trim();
+            if (!isRequired(password)) {
+                showError(passwordEl, 'Password cannot be blank.');
+            } else if (!isPasswordSecure(password)) {
+                showError(passwordEl, 'Password must have at least 8 characters that include at least 1 lowercase character, 1 uppercase character, 1 number, and 1 special character in (!@#$%^&*).');
+            } else {
+                showSuccess(passwordEl);
+                valid = true;
+            }
+            return valid;
+        };
+    
+        // Function to check confirm password validity
+        const checkConfirmPassword = () => {
+            let valid = false;
+            const confirmPassword = confirmPasswordEl.value.trim();
+            const password = passwordEl.value.trim();
+            if (!isRequired(confirmPassword)) {
+                showError(confirmPasswordEl, 'Please enter the password again.');
+            } else if (password !== confirmPassword) {
+                showError(confirmPasswordEl, 'The password does not match.');
+            } else {
+                showSuccess(confirmPasswordEl);
+                valid = true;
+            }
+            return valid;
+        };
+    
+        // Utility functions
+        const isEmailValid = (email) => {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        };
+    
+        const isPhoneValid = (phone) => {
+            const re = /^\d{10}$/; // This regex validates a 10-digit phone number
+            return re.test(phone);
+        };
+    
+        const isPasswordSecure = (password) => {
+            const re = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            return re.test(password);
+        };
+    
+        const isRequired = (value) => value === '' ? false : true;
+    
+        const showError = (input, message) => {
+            const formField = input.parentElement;
+            formField.classList.remove('success');
+            formField.classList.add('error');
+            const error = formField.querySelector('small');
+            error.textContent = message;
+        };
+    
+        const showSuccess = (input) => {
+            const formField = input.parentElement;
+            formField.classList.remove('error');
+            formField.classList.add('success');
+            const error = formField.querySelector('small');
+            error.textContent = '';
+        };
+    
+        // Form event listener for submit
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            let isFirstNameValid = checkFirstName(),
+                isLastNameValid = checkLastName(),
+                isEmailValid = checkEmail(),
+                isPhoneValid = checkPhone(),
+                isPasswordValid = checkPassword(),
+                isConfirmPasswordValid = checkConfirmPassword();
+            let isFormValid = isFirstNameValid &&
+                            isLastNameValid &&
+                            isEmailValid &&
+                            isPhoneValid &&
+                            isPasswordValid &&
+                            isConfirmPasswordValid;
+    
+            if (isFormValid) {
+                const formData = new FormData(form);
+    
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: formData
+                    });
+    
+                    const result = await response.json();
+    
+                    if (response.ok) {
+                        formMessages.style.color = 'green';
+                        formMessages.textContent = result.message;
+                        form.reset()
+                        setTimeout(() => {
+                            window.location.href = result.redirect_url;
+                        }, 2000);
+                    } else {
+                        formMessages.style.color = 'red';
+                        formMessages.textContent = result.error;
+                        form.reset()
+                    }
+                } catch (error) {
+                    formMessages.style.color = 'red';
+                    formMessages.textContent = 'An error occurred. Please try again.';
+                    form.reset()
+                }
+            }
+        });
+    
+        // Debounce function for input validation
+        const debounce = (fn, delay = 500) => {
+            let timeoutId;
+            return (...args) => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+                timeoutId = setTimeout(() => {
+                    fn.apply(null, args);
+                }, delay);
+            };
+        };
+    
+        // Input event listener for real-time validation
+        form.addEventListener('input', debounce(function (e) {
+            switch (e.target.id) {
+                case 'first_name':
+                    checkFirstName();
+                    break;
+                case 'last_name':
+                    checkLastName();
+                    break;
+                case 'email':
+                    checkEmail();
+                    break;
+                case 'phone':
+                    checkPhone();
+                    break;
+                case 'password':
+                    checkPassword();
+                    break;
+                case 'confirm_password':
+                    checkConfirmPassword();
+                    break;
+            }
+        }));
+    });
+
+    
+    </script>
+
+    <script>
+      document.getElementById('showPassword').addEventListener('change', function() {
+        var passwordField = document.getElementById('password');
+        var confirmPasswordField = document.getElementById('confirm_password');
+        
+        if (this.checked) {
+            passwordField.type = 'text';
+            confirmPasswordField.type = 'text';
+        } else {
+            passwordField.type = 'password';
+            confirmPasswordField.type = 'password';
+        }
+    });
+    </script>
+
+    <script>
+      
+    </script>
+{% endblock%}
+    

@@ -1,0 +1,68 @@
+{% extends 'useradmin/base.html' %}
+
+{% load static %}
+{% block content %} 
+
+<div class="page-wrapper">
+    <div class="row">
+        <div class="col-md-12 d-flex">
+        <div class="card card-table flex-fill">
+            <div class="card-header">
+            <h4 class="card-title float-start text-center">Order List</h4>
+            <div class="table-search float-end">
+                <input
+                type="text"
+                class="form-control"
+                placeholder="Search"
+                />
+                <button class="btn" type="submit">
+                <i class="fa fa-search"></i>
+                </button>
+            </div>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive no-radius">
+                <table class="table table-hover table-center">
+                <thead>
+                    <tr>
+                    <th>Order ID</th>
+                    <th>Billing Name</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th class="">Payment Status</th>
+                    <th class="">Payment Method</th>
+                    <th class="">View Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in latest_orders %}
+                    <tr>
+                    <td class="text-nowrap">
+                        <div class="font-weight-600">#{{ l.sku }}</div>
+                    </td>
+                    <td class="text-nowrap">{{l.user.username|title}}</td>
+                    <td class="">{{l.order_date}}</td>
+                    <td class="">₵{{l.price}}</td>
+                    <td class="">
+                        {% if l.paid_status == True %}
+                        <span class="badge badge-pill badge-success">Paid</span>
+                        {% else %}
+                        <span class="badge badge-pill badge-danger">Not Paid</span>
+                        {% endif %}
+                    </td>
+                    <td>Mobile Money</td>
+                    <td>
+                        <a href="#" class="btn btn-xs"> View details</a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

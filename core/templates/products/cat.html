@@ -1,0 +1,63 @@
+{% load static %}
+<!-- Skeleton Loading Template -->
+<template id="skeleton-card-template"> 
+    <div class="product">
+        <figure class="product-media">
+            <a href="javascript:void(0)">
+                <div class="header-img skeleton"></div>
+            </a>
+        </figure><!-- End .product-media -->
+
+        <div class="product-body">
+            <div class="product-cat skeleton skeleton-text"></div><!-- End .product-cat -->
+            <h3 class="product-title skeleton skeleton-text"></h3><!-- End .product-title -->
+            <div class="product-price skeleton skeleton-text"></div><!-- End .product-price -->
+            <div class="product-price skeleton skeleton-text"></div><!-- End .product-price -->
+        </div><!-- End .product-body -->
+    </div><!-- End .product -->
+</template>
+
+<div style="margin: 10px 0;" class="bestseller-products bg-light">
+    <div class="block">
+        <div class="block-wrapper">
+            <div class="container">
+                <div class="heading heading-flex">
+                    <div class="heading-left">
+                        <h2 class="title">Bestsellers</h2><!-- End .title -->
+                    </div><!-- End .heading-left -->
+
+                    <div class="heading-right">
+                        <a href="category.html" class="title-link">View more Products <i class="icon-long-arrow-right"></i></a>
+                    </div><!-- End .heading-right -->
+                </div><!-- End .header-flex -->
+
+                <div id="book-carousel" class="owl-carousel carousel-equal-height owl-simple" data-toggle="owl" 
+                    data-owl-options='{
+                        "nav": false, 
+                        "dots": false,
+                        "margin": 10,
+                        "loop": false,
+                        "responsive": {
+                            "0": {
+                                "items":2
+                            },
+                            "480": {
+                                "items":3
+                            },
+                            "768": {
+                                "items":4
+                            },
+                            "992": {
+                                "items":5
+                            },
+                            "1440": {
+                                "items":6
+                            }
+                        }
+                    }'>
+                    <!-- Skeleton cards will be inserted here -->
+                </div><!-- End .owl-carousel -->
+            </div><!-- End .container -->
+        </div><!-- End .block-wrapper -->
+    </div><!-- End .block -->
+</div><!-- End .bg-light pt-4 pb-4 -->

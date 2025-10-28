@@ -1,0 +1,637 @@
+{% extends 'partials/base.html' %}
+{% block title %}Shopping Cart{% endblock title %}
+{% load static humanize %}
+{% load product_tags %}
+
+{% block content  %}
+
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('{% static '' %}assetss/images/page-header-bg.jpg')">
+        <div class="container">
+            {% if request.GET.q %}
+                <h1 class="page-title">Results for "{{query}}"<span>Shop</span></h1>
+            {% else %}
+                <h1 class="page-title">{{category.title}}<span>Shop</span></h1>
+            {% endif %}
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+
+    <div class="page-content">
+        <div class="container">
+            <div class="toolbox">
+                <div class="toolbox-left">
+                    <a href="#" class="sidebar-toggler"><i class="icon-bars"></i>Filters</a>
+                </div><!-- End .toolbox-left -->
+
+                <div class="toolbox-center">
+                    <div class="toolbox-info">
+                         <span>{{product_count}}</span> Product{{product_count|pluralize}}
+                    </div><!-- End .toolbox-info -->
+                </div><!-- End .toolbox-center -->
+
+                <div class="toolbox-right">
+                    <div class="toolbox-sort">
+                        <label for="sortby">Sort by:</label>
+                        <div class="select-custom">
+                            <select name="sortby" id="sortby" class="form-control">
+                                <option value="popularity" selected="selected">Most Popular</option>
+                                <option value="rating">Most Rated</option>
+                                <option value="date">Date</option>
+                            </select>
+                        </div>
+                    </div><!-- End .toolbox-sort -->
+                </div><!-- End .toolbox-right -->
+            </div><!-- End .toolbox -->
+
+            <script>
+                
+                document.addEventListener('DOMContentLoaded', function() {
+                    const colorLinks = document.querySelectorAll('.color-link');
+                
+                    colorLinks.forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const colorId = link.dataset.id;
+                
+                            if (urlParams.has('color')) {
+                                const currentColors = urlParams.getAll('color');
+                                const index = currentColors.indexOf(colorId);
+                                if (index !== -1) {
+                                    currentColors.splice(index, 1);
+                                } else {
+                                    currentColors.push(colorId);
+                                }
+                                urlParams.delete('color');
+                                currentColors.forEach(function(filteredColor) {
+                                    urlParams.append('color', filteredColor);
+                                });
+                            } else {
+                                urlParams.append('color', colorId);
+                            }
+                
+                            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                            window.history.replaceState({}, '', newUrl);
+                
+                            window.location.href = newUrl;
+                        });
+                    });
+                });
+                
+                document.addEventListener('DOMContentLoaded',function(){
+                    const sizeLinks = document.querySelectorAll('.size-link');
+
+                    sizeLinks.forEach(function(link){
+                        link.addEventListener('click', function(e){
+                            e.preventDefault();
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const sizeId = link.dataset.id;
+                        
+                            if (urlParams.has('size')) {
+                                const currentSize = urlParams.getAll('size');
+                                const index = currentSize.indexOf(sizeId);
+                                if (index !== -1) {
+                                    currentSize.splice(index, 1);
+                                } else {
+                                    currentSize.push(sizeId);
+                                }
+                                urlParams.delete('size');
+                                currentSize.forEach(function(filteredSize) {
+                                    urlParams.append('size', filteredSize);
+                                });
+                            } else {
+                                urlParams.append('size', sizeId);
+                            }
+                
+                            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                            window.history.replaceState({}, '', newUrl);
+                
+                            window.location.href = newUrl;
+                        })
+                    })
+                });
+
+                document.addEventListener('DOMContentLoaded',function(){
+                    const brandLinks = document.querySelectorAll('.brand-link');
+
+                    brandLinks.forEach(function(link){
+                        link.addEventListener('click', function(e){
+                            e.preventDefault();
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const brandId = link.dataset.id;
+                        
+                            if (urlParams.has('brand')) {
+                                const currentBrand = urlParams.getAll('brand');
+                                const index = currentBrand.indexOf(brandId);
+                                if (index !== -1) {
+                                    currentBrand.splice(index, 1);
+                                } else {
+                                    currentBrand.push(brandId);
+                                }
+                                urlParams.delete('brand');
+                                currentBrand.forEach(function(filteredBrand) {
+                                    urlParams.append('brand', filteredBrand);
+                                });
+                            } else {
+                                urlParams.append('brand', brandId);
+                            }
+                
+                            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                            window.history.replaceState({}, '', newUrl);
+                
+                            window.location.href = newUrl;
+                        })
+                    })
+                });
+
+                document.addEventListener('DOMContentLoaded',function(){
+                    const vendorLinks = document.querySelectorAll('.vendor-link');
+
+                    vendorLinks.forEach(function(link){
+                        link.addEventListener('click', function(e){
+                            e.preventDefault();
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const vendorId = link.dataset.id;
+                        
+                            if (urlParams.has('vendor')) {
+                                const currentVendor = urlParams.getAll('vendor');
+                                const index = currentVendor.indexOf(vendorId);
+                                if (index !== -1) {
+                                    currentVendor.splice(index, 1);
+                                } else {
+                                    currentVendor.push(vendorId);
+                                }
+                                urlParams.delete('vendor');
+                                currentVendor.forEach(function(filteredVendor) {
+                                    urlParams.append('vendor', filteredVendor);
+                                });
+                            } else {
+                                urlParams.append('vendor', vendorId);
+                            }
+                
+                            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                            window.history.replaceState({}, '', newUrl);
+                
+                            window.location.href = newUrl;
+                        })
+                    })
+                });
+                document.addEventListener('DOMContentLoaded',function(){
+                    const categoryLinks = document.querySelectorAll('.category-link');
+
+                    categoryLinks.forEach(function(link){
+                        link.addEventListener('click', function(e){
+                            e.preventDefault();
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const categoryId = link.dataset.id;
+                        
+                            if (urlParams.has('category')) {
+                                const currentCategory = urlParams.getAll('category');
+                                const index = currentCategory.indexOf(categoryId);
+                                if (index !== -1) {
+                                    currentCategory.splice(index, 1);
+                                } else {
+                                    currentCategory.push(categoryId);
+                                }
+                                urlParams.delete('category');
+                                currentCategory.forEach(function(filteredCategory) {
+                                    urlParams.append('category', filteredCategory);
+                                });
+                            } else {
+                                urlParams.append('category', categoryId);
+                            }
+                
+                            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                            window.history.replaceState({}, '', newUrl);
+                
+                            window.location.href = newUrl;
+                        })
+                    })
+                });
+
+            </script>
+
+            <div class="products">
+                <div class="row">
+                    {% if products %}
+                        {% for p in products %}
+                        <div class="col-4 col-6 col-xxl-2 col-xl-3 col-sm-4 col-xs-6 col-lg-3 col-md-3 col-md-4 px-1">
+                            <div class="product">
+                                <figure class="product-media">
+                                    <a href="{{p.get_absolute_url}}">
+                                        <img src="{{p.image.url}}" alt="Product image" class="product-image">
+                                    </a>
+
+                                    <div class="product-action-vertical">
+                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                                    </div><!-- End .product-action -->
+                                </figure><!-- End .product-media -->
+
+                                <div class="product-body">
+                                    <div class="product-cat">
+                                        <a href="{{p.sub_category.get_absolute_url}}">{{p.sub_category.title}}</a>
+                                    </div><!-- End .product-cat -->
+                                    <h3 class="product-title">
+                                        <a href="{{p.get_absolute_url}}">{{p.title|truncatechars:33}}</a>
+                                    </h3><!-- End .product-title -->
+                                    <div class="product-price">
+                                        <span data-base-price="{{p.price|floatformat:"2"}}" class="new-price">{{currency}}{{ p.price|multiply:rate|floatformat:"2" }}</span>
+                                        <span data-base-price="{{p.old_price|floatformat:"2"}}" class="old-price">Was {{currency}}{{ p.old_price|multiply:rate|floatformat:"2" }}</span>
+                                    </div><!-- End .product-price -->
+                                    <div class="ratings-container">
+                                        <div class="ratings">
+                                            <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                                        </div><!-- End .ratings -->
+                                        <span class="ratings-text">( {{ p.reviews.all.count }} Review{{ p.reviews.all.count|pluralize }} )</span>
+                                    </div><!-- End .rating-container -->
+                                </div><!-- End .product-body -->
+                            </div><!-- End .product -->
+                        </div><!-- End .col-sm-6 col-lg-4 col-xl-3 -->
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center">
+                            <h2>No <span style="color: #4cb69f; justify-content: center;">Products</span> Found</h2>
+                        </div>
+                    {% endif %}
+                </div><!-- End .row -->
+
+                <style>
+                                        
+                    .basic-pagination ul li {
+                        display: inline-block;
+                    }
+                    .basic-pagination ul li:not(:last-child) {
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+                    }
+                    .basic-pagination ul li a {
+                        display: inline-block;
+                        width: 40px;
+                        height: 40px;
+                        line-height: 38px;
+                        text-align: center;
+                        font-size: 14px;
+                        border-radius: 2px;
+                        font-weight: 600;
+                        background: #f5f5f5;
+                        border: 1px solid #e5e5e5;
+                    }
+                    .basic-pagination ul li a:hover, .basic-pagination ul li a.active {
+                        background: #fcbe00;
+                        color: #ffffff;
+                        border-color: #fcbe00;
+                    }
+                    .basic-pagination-border {
+                        border-top: 1px solid #e6e6e6;
+                    }
+  
+                </style>
+
+                <div class="row">
+                    <!--pagination-->
+                    <div class="col-xl-12">
+                        {% if products.has_other_pages %}
+                            <ul class="pagination">
+                                {% if products.has_previous %}
+                                    {% if request.GET.q %}
+                                        <li class="page-item">
+                                            <a class="page-link page-link-prev" href="?q={{query}}&page={{products.previous_page_number}}">
+                                                <span><i class="icon-long-arrow-left"></i></span>Prev
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link page-link-prev" href="?page={{products.previous_page_number}}">
+                                                <span><i class="icon-long-arrow-left"></i></span>Prev
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% for i in products.paginator.page_range %}
+                                    {% if products.number == i %}
+                                        <li class="page-item active"><a class="page-link" href="">{{i}}</a></li>
+                                    {% else %}
+                                        {% if request.GET.q %}
+                                            <li class="page-item"><a class="page-link" href="?q={{query}}&page={{i}}">{{i}}</a></li>
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if products.has_next %}
+                                    {% if request.GET.q %}
+                                        <li class="page-item">
+                                            <a class="page-link page-link-next" href="?q={{query}}&page={{products.next_page_number}}">
+                                                Next <span><i class="icon-long-arrow-right"></i></span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link page-link-next" href="?page={{products.next_page_number}}">
+                                                Next <span><i class="icon-long-arrow-right"></i></span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+
+                    </div>
+                    <!--/-->
+                </div>
+
+            </div><!-- End .products -->
+
+            <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
+            <aside class="sidebar-shop sidebar-filter">
+                <div class="sidebar-filter-wrapper">
+                    <div class="widget widget-clean">
+                        <label><i class="icon-close"></i>Filters</label>
+                        <a href="#" class="sidebar-filter-clear">Clean All</a>
+                    </div><!-- End .widget -->
+                    {% if other_brands %}
+                    <div class="widget widget-collapsible">
+                        <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1">
+                                Brands
+                            </a>
+                        </h3><!-- End .widget-title -->
+                       
+                        
+                        <div class="collapse show" id="widget-1">
+                            <div class="widget-body">
+                                <div class="filter-items filter-items-count">
+                                    {% for c in other_brands %}
+                                    <div class="filter-item">
+                                            <label class="checkbox-container">
+                                                <input type="checkbox">
+                                                <a  href="{{c.get_absolute_url}}"><span class="checkbox-checkmark"> {{c.title}}</span></a>
+                                            </label>
+                                        <span class="item-count">{{c.brand_count}}</span>
+                                    </div><!-- End .filter-item -->
+                                    {% endfor %}
+                                </div><!-- End .filter-items -->
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -->
+                    </div><!-- End .widget -->
+                    {% endif %}
+
+                    {% if vendors %}
+                    <div class="widget widget-collapsible">
+                        <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-9" role="button" aria-expanded="true" aria-controls="widget-9">
+                                Vendor
+                            </a>
+                        </h3><!-- End .widget-title -->
+
+                        <div class="collapse show" id="widget-9">
+                            <div class="widget-body">
+                                <div class="filter-items">
+                                    {% for v in vendors %}
+                                    <div class="filter-item">
+                                        {% if v.id in active_vendors %}
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" checked id="size-{{v.id}}">
+                                            <label data-id="{{v.id}}" class="vendor-link custom-control-label" for="size-{{v.id}}">{{v.name}}</label>
+                                        </div><!-- End .custom-checkbox -->
+                                        {% else %}
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="size-{{v.id}}">
+                                            <label data-id="{{v.id}}" class="vendor-link custom-control-label" for="size-{{v.id}}">{{v.name}}</label>
+                                        </div><!-- End .custom-checkbox -->
+                                        {% endif %}
+                                    </div>
+                  
+                                    {% endfor %}
+                                </div><!-- End .filter-items -->
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -->
+                    </div><!-- End .widget -->
+                    {% endif %}
+                    
+                    {% if sizes %}
+                    <div class="widget widget-collapsible">
+                        <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true" aria-controls="widget-2">
+                                Size
+                            </a>
+                        </h3><!-- End .widget-title -->
+
+                        <div class="collapse show" id="widget-2">
+                            <div class="widget-body">
+                                <div class="filter-items">
+                                    {% for s in sizes %}
+                                    <div class="filter-item">
+                                        {% if s.id in active_sizes %}
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" checked id="size-{{s.id}}">
+                                            <label data-id="{{s.id}}" class="size-link custom-control-label" for="size-{{s.id}}">{{s.name}}</label>
+                                        </div><!-- End .custom-checkbox -->
+                                        {% else %}
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="size-{{s.id}}">
+                                            <label data-id="{{s.id}}" class="size-link custom-control-label" for="size-{{s.id}}">{{s.name}}</label>
+                                        </div><!-- End .custom-checkbox -->
+                                        {% endif %}
+                                    </div>
+                  
+                                    {% endfor %}
+                                </div><!-- End .filter-items -->
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -->
+                    </div><!-- End .widget -->
+                    {% endif %}
+
+                    {% if categorys %}
+                    <div class="widget widget-collapsible">
+                        <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true" aria-controls="widget-2">
+                                Category
+                            </a>
+                        </h3><!-- End .widget-title -->
+
+                        <div class="collapse show" id="widget-2">
+                            <div class="widget-body">
+                                <div class="filter-items">
+                                    {% for s in categorys %}
+                                    <div class="filter-item">
+                                        {% if s.id in active_categorys %}
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" checked id="size-{{s.id}}">
+                                            <label data-id="{{s.id}}" class="category-link custom-control-label" for="size-{{s.id}}">{{s.title}}</label>
+                                        </div><!-- End .custom-checkbox -->
+                                        {% else %}
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="size-{{s.id}}">
+                                            <label data-id="{{s.id}}" class="category-link custom-control-label" for="size-{{s.id}}">{{s.title}}</label>
+                                        </div><!-- End .custom-checkbox -->
+                                        {% endif %}
+                                    </div>
+                  
+                                    {% endfor %}
+                                </div><!-- End .filter-items -->
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -->
+                    </div><!-- End .widget -->
+                    {% endif %}
+                    
+
+                    {% if colors %}
+                    <div class="widget widget-collapsible">
+                        <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-3" role="button" aria-expanded="true" aria-controls="widget-3">
+                                Colour
+                            </a>
+                        </h3><!-- End .widget-title -->
+
+                        <div class="collapse show" id="widget-3">
+                            <div class="widget-body">
+                                <div class="filter-colors">
+                                    {% for c in colors %}
+                                        {% if c.id in active_colors %}
+                                            <a data-id="{{c.id}}" title="{{c.name}}"  class="color-link selected" href="#" style="background: {{c.code}};">
+                                                <span class="sr-only">{{c.name}}</span>
+                                            </a>
+                                        {% else %}
+                                            <a data-id="{{c.id}}" title="{{c.name}}"  class="color-link" href="#" style="background: {{c.code}};">
+                                                <span class="sr-only">{{c.name}}</span>
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                </div><!-- End .filter-colors -->
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -->
+                    </div><!-- End .widget -->
+                    {% endif %}
+
+                    <style>
+                        
+                          .price-input {
+                            width: 100%;
+                            display: flex;
+                            margin: 30px 0 35px;
+                          }
+                          .price-input .field {
+                            display: flex;
+                            width: 100%;
+                            height: 45px;
+                            align-items: center;
+                          }
+                          .field input {
+                            width: 100%;
+                            height: 100%;
+                            outline: none;
+                            font-size: 12px;
+                            margin-left: 12px;
+                            border-radius: 5px;
+                            text-align: center;
+                            border: 1px solid #999;
+                            -moz-appearance: textfield;
+                          }
+                          {% comment %} input[type="number"]::-webkit-outer-spin-button,
+                          input[type="number"]::-webkit-inner-spin-button {
+                            -webkit-appearance: none;
+                          } {% endcomment %}
+                          .price-input .seperator {
+                            width: 130px;
+                            display: flex;
+                            font-size: 19px;
+                            align-items: center;
+                            justify-content: center;
+                          }
+                          .slider {
+                            height: 5px;
+                            position: relative;
+                            background: #ddd;
+                            border-radius: 5px;
+                          }
+                          .slider .progress {
+                            height: 100%;
+                            left: 25%;
+                            right: 25%;
+                            position: absolute;
+                            border-radius: 5px;
+                            background: #000;
+                          }
+                          .range-input {
+                            position: relative;
+                          }
+                          .range-input input {
+                            position: absolute;
+                            width: 100%;
+                            height: 5px;
+                            top: -5px;
+                            background: none;
+                            pointer-events: none;
+                            -webkit-appearance: none;
+                            -moz-appearance: none;
+                          }
+                          input[type="range"]::-webkit-slider-thumb {
+                            height: 17px;
+                            width: 17px;
+                            border-radius: 50%;
+                            background: #000;
+                            pointer-events: auto;
+                            -webkit-appearance: none;
+                            box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+                          }
+                          input[type="range"]::-moz-range-thumb {
+                            height: 17px;
+                            width: 17px;
+                            border: none;
+                            border-radius: 50%;
+                            background: #000;
+                            pointer-events: auto;
+                            -moz-appearance: none;
+                            box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+                          }
+                          
+                    </style>
+
+                    <div class="widget widget-collapsible">
+                        <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-5" role="button" aria-expanded="true" aria-controls="widget-5">
+                                Price
+                            </a>
+                        </h3><!-- End .widget-title -->
+
+                        <div class="collapse show" id="widget-5">
+                            <div class="widget-body">
+                                <div class="filter-price">
+                                    <div class="filter-price-text">
+                                        Price( GHS ):
+                                        <span class="justify-content: end" id="filter-price-range">APPLY</span>
+                                    </div><!-- End .filter-price-text -->
+                                        <input id="gapp" type="hidden" value="{{gap}}">
+                                      
+                                        <div class="price-input">
+                                          <div class="field">
+                                            <input type="text" class="input-min" value="{{min_price}}" />
+                                          </div>
+                                          <div class="seperator">-</div>
+
+                                          <div class="field">
+                                            <input type="text" class="input-max" value="{{max_price}}" />
+                                          </div>
+                                        </div>
+                                        <div class="slider">
+                                          <div class="progress"></div>
+                                        </div>
+                                        
+                                        <div class="range-input">
+                                          <input type="range" class="range-min" min="0" max="{{min_price}}" value="{{max_price}}" step="10">
+                                          <input type="range" class="range-max" min="{{min_price}}" max="{{max_value}}" value="{{max_price}}" step="10">
+                                        </div>
+
+                                </div><!-- End .filter-price -->
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -->
+                    </div>
+                </div><!-- End .sidebar-filter-wrapper -->
+            </aside><!-- End .sidebar-filter -->
+        </div><!-- End .container -->
+    </div><!-- End .page-content -->
+</main><!-- End .main -->
+{% endblock %}

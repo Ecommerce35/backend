@@ -1,0 +1,315 @@
+{% extends 'partials/base.html' %}
+{% block title %}Dashboard | {{request.user.username}}{% endblock title %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+
+{% load static %}
+{% block content %}
+
+<style>
+    .card {
+        box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+        margin-bottom: 1rem;
+    }
+    .card {
+        position: relative;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0 solid rgba(0, 0, 0, .125);
+        border-radius: .25rem;
+    }
+    .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        padding: 1rem;
+    }
+    .card-header {
+        padding: .75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0, 0, 0, .03);
+        border-bottom: 0 solid rgba(0, 0, 0, .125);
+    }
+    .card-body {
+        -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1.25rem;
+    }
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+
+<div class="container">
+
+    <div>
+        <h2>Choose Your Location</h2>
+    <div id="map"></div>
+    <input type="text" id="locationName" readonly>
+    <form id="locationForm">
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" readonly>
+        <br>
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" readonly>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    </div>
+
+    <script>
+        // Initialize and display the map
+        document.addEventListener("DOMContentLoaded", function () {
+            const map = L.map("map").setView([6.700071,  -1.630783], 13); // Default center and zoom level
+
+            // Add Leaflet tile layer - replace with your preferred tile provider
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                
+            }).addTo(map);
+
+            // Initialize marker with a default position
+            const marker = L.marker([6.700071,  -1.630783], {
+                draggable: true // Allow marker to be dragged
+            }).addTo(map);
+
+
+            // Function to update marker position and form fields
+            function updateMarkerPosition(e) {
+                const latlng = marker.getLatLng();
+                document.getElementById("latitude").value = latlng.lat.toFixed(6);
+                document.getElementById("longitude").value = latlng.lng.toFixed(6);
+
+                reverseGeocode(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+            }
+
+            // Event listener for dragging the marker
+            marker.on("dragend", updateMarkerPosition);
+
+            // Center map based on user's current location (optional)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    console.log(position)
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accu: position.coords.accuracy,
+                    };
+
+                    //const circle = L.circle([userLocation.lat.toFixed(6), userLocation.lng.toFixed(6)], {radius: userLocation.accu}).addTo(map)
+                    
+                    map.setView(userLocation, 13); // Set map view to user's location
+                    marker.setLatLng(userLocation); // Place marker at user's location
+                    updateMarkerPosition(); // Update form fields
+                });
+            }
+
+            function reverseGeocode(lat, lng) {
+                const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.display_name) {
+                            document.getElementById("locationName").value = data.display_name;
+                            console.log(data)
+                            console.log(data.address.country)
+                            console.log(data.address.city)
+                            console.log(data.address.state)
+                        } else {
+                            document.getElementById("locationName").value = "Location name not found";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById("locationName").value = "Error retrieving location name";
+                    });
+            }
+
+            // Submit form handler (you can adapt this to your backend handling)
+            const form = document.getElementById("locationForm");
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                const latitude = document.getElementById("latitude").value;
+                const longitude = document.getElementById("longitude").value;
+                // Here you can submit the latitude and longitude to your server
+                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                alert(`Location submitted: Latitude ${latitude}, Longitude ${longitude}`);
+                // You might want to redirect or perform further actions after submission
+            });
+        });
+
+
+    </script>
+ 
+
+    <div class="row">
+        <div class="col-12">
+            <div class="">
+                <div class="grid">
+                    {% if count >= 4 %}
+                    <div style="border: dotted;" class="card">
+                        <div style="place-content: center;" class="card-header">
+                            <h5 class="m-0">Add new address</h5>
+                        </div>
+                        <div class="card-body text-muted">
+                            <span class="align-items-center" style="font-size: 6.79rem;">
+                               <p>Can have a maximum of four addresses, you can only edit or delete</p>
+                            </span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="border: dotted;" class="card">
+                        <div class="card-header">
+                            <h5 class="m-0">Add new address</h5>
+                        </div>
+                        <div class="card-body text-muted">
+                            <span class="align-items-center" style="font-size: 6.79rem;">
+                                <a href="{% url 'customer:add_address' %}">
+                                    <i class="icon-plus"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+
+                    {% endif %}
+
+                    {% for a in address %}
+                    <div class="card" id="address-{{a.id}}">
+                        <div id="default-address-{{a.id}}" class="card-header default-address">
+                            {% if a.status == True %}
+                            <h5 class="m-0 iconic">
+                                <i class="icon-check text-success">Default</i>
+                            </h5>
+                            {% else %}
+                             <span class="" style="cursor: pointer;" onclick="setDefaultAddress({{a.id}})">Make default</span> 
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <strong>{{a.first_name}} &nbsp;{{a.last_name}}</strong> <br>
+                            {{a.mobile}} <br>
+                            {{a.email}} <br>
+                            {{a.location.town}} <br>
+                            {{a.location.region}} <br>
+                            {{a.location.country}} <br>
+                            <div><span><a href="{% url 'customer:edit_address' a.id %}">Edit</a> | <a href="#" onclick="deleteAddress({{a.id}})">Delete</a></span></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div>
+
+            {% if recently_viewed %}
+                <div class="bg-light">
+                    <div class="container">
+                        <ul class="nav nav-pills nav-big nav-border-anim justify-content-center" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active">Previously viewed product{{recently_viewed|pluralize}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content tab-content-carousel">
+                            <div class="tab-pane p-0 fade show active" id="products-trending-tab" role="tabpanel" aria-labelledby="products-trending-link">
+                                <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                                    data-owl-options='{
+                                        "nav": false, 
+                                        "dots": false,
+                                        "margin": 10,
+                                        "loop": false,
+                                        "responsive": {
+                                            "0": {
+                                                "items":2
+                                            },
+                                            "480": {
+                                                "items":2
+                                            },
+                                            "768": {
+                                                "items":3
+                                            },
+                                            "992": {
+                                                "items":5
+                                            },
+                                            "1200": {
+                                                "items":6,
+                                                "nav": true
+                                            }
+                                        }
+                                    }'>
+
+                                    {% for p in recently_viewed %}
+                                    <div class="product">
+                                        <figure class="product-media">
+                                            <span class="product-label label-sale">Sale</span>
+                                            <a href="{{p.get_absolute_url}}">
+                                                <img src="{{p.image.url}}" alt="Product image" class="product-image">
+                                            </a>
+                                        </figure><!-- End .product-media -->
+
+                                        <div class="product-body">
+                                            <div class="product-cat">
+                                                <a href="{{p.sub_category.get_absolute_url}}">{{p.sub_category.title}}</a>
+                                            </div><!-- End .product-cat -->
+                                            <h3 class="product-title"><a href="{{p.get_absolute_url}}">{{p.title|truncatechars:25}}</a></h3><!-- End .product-title -->
+                                            <div class="product-price">
+                                                <span class="new-price">GHS{{p.price}}</span>
+                                                <span class="old-price">Was GHS{{p.old_price}}</span>
+                                            </div><!-- End .product-price -->
+                                        </div><!-- End .product-body -->
+                                    </div><!-- End .product -->
+                                    {% endfor %}
+                                </div><!-- End .owl-carousel -->
+                            </div><!-- .End .tab-pane -->
+                          
+                        </div><!-- End .tab-content -->
+                    </div><!-- End .container -->
+                </div><!-- End .bg-light pt-4 pb-4 -->
+                {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function setDefaultAddress(addressId) {
+        console.log("Hiiiiiiiiiii")
+        fetch(`/set-default-address/${addressId}/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log(response)
+                //document.querySelectorAll('.default-address').forEach(el => el.innerHTML=``);
+                
+                //document.querySelectorAll('.default-address').forEach(el => el.innerHTML=`
+                //<span class="" style="cursor: pointer;" onclick="setDefaultAddress({{a.id}})">Make default</span> 
+                //`);
+
+                //document.getElementById(`default-address-${addressId}`).innerHTML=`<h5 class="m-0 iconic">
+                //    <i class="icon-check text-success">Default</i>
+                //</h5>`;
+                window.location.reload();
+
+            }
+        })
+    }
+</script>
+
+{% endblock %}

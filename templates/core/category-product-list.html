@@ -1,0 +1,173 @@
+{% extends 'partials/base.html' %}
+{% block title %}{{category.title|title}}{% endblock title %}
+{% load humanize %}
+{% load static %}
+{% block content  %}
+    <main class="main bg-light">
+        <div class="page-header mt-30 mb-50">
+            <div class="container">
+                <div class="archive-header">
+                    <div class="row align-items-center">
+                        <div class="col-xl-3">
+                            <h1 class="mb-15">{{category.title|title}}</h1>
+                            <div class="breadcrumb">
+                                <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                                <span></span> Shop <span></span>{{category.main_category.title|title}} - {{category.sub_category.title|title}} {{category.title|title}}
+                            </div>
+                        </div>
+                        {% comment %} <div class="col-xl-9 text-end d-none d-xl-block">
+                            <ul class="tags-list">
+                                <li class="hover-up">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Cabbage</a>
+                                </li>
+                                <li class="hover-up active">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Broccoli</a>
+                                </li>
+                                <li class="hover-up">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Artichoke</a>
+                                </li>
+                                <li class="hover-up">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Celery</a>
+                                </li>
+                                <li class="hover-up mr-0">
+                                    <a href="blog-category-grid.html"><i class="fi-rs-cross mr-10"></i>Spinach</a>
+                                </li>
+                            </ul>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mb-30">
+            <div class="row">
+                <div class="col-12">
+                    <div class="shop-product-fillter">
+                        <div class="totall-product">
+                            <p>We found <strong class="text-secondary">{{category.product_count}}</strong> item{{category.product_count|pluralize}} for you!</p>
+                        </div>
+                        <div class="sort-by-product-area">
+                            <div class="sort-by-cover mr-10">
+                                <div class="sort-by-product-wrap">
+                                    <div class="sort-by">
+                                        <span><i class="fi-rs-apps"></i>Show:</span>
+                                    </div>
+                                    <div class="sort-by-dropdown-wrap">
+                                        <span> 50 <i class="fi-rs-angle-small-down"></i></span>
+                                    </div>
+                                </div>
+                                <div class="sort-by-dropdown">
+                                    <ul>
+                                        <li><a class="active" href="#">50</a></li>
+                                        <li><a href="#">100</a></li>
+                                        <li><a href="#">150</a></li>
+                                        <li><a href="#">200</a></li>
+                                        <li><a href="#">All</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sort-by-cover">
+                                <div class="sort-by-product-wrap">
+                                    <div class="sort-by">
+                                        <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                    </div>
+                                    <div class="sort-by-dropdown-wrap">
+                                        <span> Featured <i class="fi-rs-angle-small-down"></i></span>
+                                    </div>
+                                </div>
+                                <div class="sort-by-dropdown">
+                                    <ul>
+                                        <li><a class="active" href="#">Featured</a></li>
+                                        <li><a href="#">Price: Low to High</a></li>
+                                        <li><a href="#">Price: High to Low</a></li>
+                                        <li><a href="#">Release Date</a></li>
+                                        <li><a href="#">Avg. Rating</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if products %}
+                    <div class="row product-grid myTable" id="filtered-product ">
+                        {% for p in products %}
+                        <div class="col-4 col-xxl-2 col-xl-3 col-xs-6 col-lg-4 col-md-3 mx-0 px-1 hello">
+                            <div class="product-cart-wrap mb-10">
+                                <div class="product-img-action-wrap">
+                                    <div class="product-img product-img-zoom">
+                                        <a href="{{p.get_absolute_url}}">
+                                            <img class="default-img" src="{{ p.image.url }}" alt="" />
+                                            <img class="hover-img" src="{{ p.image.url }}" alt="" />
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                        <span class="stock-status out-stock" style="color: #f74b81;">{{ p.get_percentage|floatformat:0 }}%</span>
+                                    </div>
+                                </div>
+                                <div class="product-content-wrap">
+                                    <div class="product-category">
+                                        <a href="{{p.get_absolute_url}}">{{p.category.title}}</a>
+                                    </div>
+                                    <h6><a href="{{p.get_absolute_url}}">{{ p.title|truncatechars:15|title }}</a></h6>
+                                    <div class="py-0">
+                                        <p class="font-xs text-muted">By <a href="{{p.vendor.get_absolute_url}}">{{ p.vendor.name }}</a></p>
+                                    </div>
+                                    <div class="product-card-bottom py-0 px-0 my-0 mx-0">
+                                        <div style="color: #fcbe00;" >
+                                            <span class="fw-bold">₵{{p.price|floatformat:2}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!--end product card-->
+                    </div>
+                    {% else %}
+                        <div class="text-center">
+                            <h2>No <span style="color: #4cb69f;">Product</span> Found</h2>
+                        </div>
+                    {% endif %}
+                    <!--product grid-->
+
+                    <div class="row">
+                        <!--pagination-->
+                        <div class="col-xl-12">
+                            <div class="basic-pagination text-center pt-30 pb-30">
+                                {% if products.has_other_pages %}
+                                <ul class="list-inline">
+                                    {% if products.has_previous %}
+                                    <li>
+                                        <a href="?page={{products.previous_page_number}}">
+                                            <i class="fal fa-angle-double-left"></i>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for i in products.paginator.page_range %}
+                                        {% if products.number == i %}
+                                        <li class="active">
+                                            <a href="">{{i}}</a>
+                                        </li>
+                                        {% else %}
+                                        <li class="">
+                                            <a href="?page={{i}}">{{i}}</a>
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if products.has_next %}
+                                    <li>
+                                        <a href="?page={{products.next_page_number}}">
+                                            <i class="fal fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!--/-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

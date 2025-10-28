@@ -1,0 +1,33 @@
+<style>
+    .active-swatch{
+        border-radius: 50%;
+        border: 1px solid #16bcdc;
+        padding: 2px;
+        
+    }
+    .parent{
+        display: flex;
+        overflow: auto;
+    }
+</style>
+
+    <input type="hidden" name="size" id="size" value="{{ size_id }}">
+    <ul>
+        <li><span class="">Colors:</span></li>
+        <div style="margin: 5px 0;" class="parent">
+            {% for rs in colors %}
+                <div class="child {% if variant.id == rs.id %} active-swatch {% endif %}">
+                    <input type="hidden" name="size" id="mySelect" value="{{ rs.id }}">
+                    <input type="hidden" id="productId" value="{{ p.id }}">
+                    {% if colors %}
+                        <span style="border-radius: 50%;">
+                            <img onclick="myFunc('{{rs.id}}')" style="border-radius: 50%; height: 60px; padding: 4px;" src="{{ rs.image.url }}">
+                        </span>
+                    {% else %}
+                        <img onclick="myFunc('{{rs.id}}')" style="border-radius: 50%; height: 60px; padding: 4px;" src="{{ p.image.url }}" style="height: 50px;">
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </ul>
+

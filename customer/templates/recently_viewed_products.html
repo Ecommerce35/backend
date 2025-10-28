@@ -1,0 +1,75 @@
+{% extends 'partials/base.html' %}
+{% block title %}Dashboard | {{request.user.username}}{% endblock title %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+
+{% load static humanize %}
+{% block content %}
+
+
+<main class="main">
+    <div class="container">
+        <div class="container">
+            <div class="d-flex justify-content-between" style="place-content: center;">
+                <a href="{% url 'customer:dashboard' %}">Back</a>
+                <a href="#" onclick="clearRecentlyViewed()">Clear all</a>
+            </div>
+        </div>
+        <div class="products">
+            <div id="the_products" class="row">
+                {% if sorted_products %}
+                    {% for p in sorted_products %}
+                    <div class="col-4 col-6 col-xxl-2 col-xl-3 col-sm-4 col-xs-6 col-lg-3 col-md-3 col-md-4 px-1">
+                        <div class="product">
+                            <figure class="product-media">
+                                <a href="{{p.get_absolute_url}}">
+                                    <img src="{{p.image.url}}" alt="Product image" class="product-image">
+                                </a>
+
+                                
+                            </figure><!-- End .product-media -->
+
+                            <div class="product-body">
+                                <div class="product-cat">
+                                    <a href="{{p.sub_category.get_absolute_url}}">{{p.sub_category.title}}</a>
+                                </div><!-- End .product-cat -->
+                                <div class="product-nav product-nav-dots">
+                                    {% for color in p.colors %}
+                                    <a href="{{p.get_absolute_url}}" title="{{color.color__name}}" style="background: {{color.color__code}};"><span class="sr-only">Color name</span></a>
+                                    {% endfor %}
+                                </div>
+                                <h3 class="product-title">
+                                    <a href="{{p.get_absolute_url}}">{{p.title|truncatechars:33}}</a>
+                                </h3><!-- End .product-title -->
+                                <div class="product-price">
+                                    GH₵{{p.product.price|intcomma}}
+                                    <span class="old-price">&nbsp;Was GH₵{{p.old_price|intcomma}}</span>
+                                </div><!-- End .product-price -->
+                                <div class="ratings-container">
+                                    <div class="ratings">
+                                        <div class="ratings-val" style="width: {{p.average_rating_percentage}}%;"></div><!-- End .ratings-val -->
+                                    </div><!-- End .ratings -->
+                                    <span class="ratings-text">( {{ p.reviews.all.count }} Review{{ p.reviews.all.count|pluralize }} )</span>
+                                </div><!-- End .rating-container -->
+                            </div><!-- End .product-body -->
+                        </div><!-- End .product -->
+                    </div><!-- End .col-sm-6 col-lg-4 col-xl-3 -->
+                    {% endfor %}
+                {% else %}
+                    <div style="place-content: center;" class="text-center">
+                        <h5>No <span style="color: #4cb69f; justify-content: center;">Products</span> Found</h5>
+                    </div>
+                {% endif %}
+            </div><!-- End .row -->
+            <div id="no_products" style="place-content: center;" class="hidden ">
+                <h5>No <span style="color: #4cb69f; justify-content: center;">Products</span> Found</h5>
+            </div>
+
+        </div><!-- End .products -->
+
+    </div>
+</main><!-- End .main -->
+    
+   
+{% endblock content %}

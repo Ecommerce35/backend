@@ -1,0 +1,592 @@
+{% extends 'partials/base2.html' %}
+{% block title %}Checkout{% endblock title %}
+{% load widget_tweaks %}
+{% load static humanize %}
+{% load product_tags %}
+{% block content %}
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+
+    <style>
+        #map {
+            height: 300px;
+            width: 100%;
+        }
+        .accordion {
+        background-color: #fff;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        border: none;
+        outline: none;
+        transition: 0.4s;
+        }
+        
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .accordion:hover {
+        background-color: #ccc;
+        }
+        
+        /* Style the accordion panel. Note: hidden by default */
+        .panel {
+        padding: 0 18px;
+        background-color: white;
+        display: none;
+        overflow: hidden;
+        }
+
+        
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+        *{
+            margin: 0;
+            padding: 0;box-sizing: border-box;
+            list-style: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .navbar-brand{
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: 800;
+        }
+        nav{
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            background-color: white;
+        }
+        .order .card{
+            position: relative;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, .1)}
+        .ribbon{
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            position: absolute}
+        .ribbon::before, .ribbon::after{
+            position: absolute;
+            content: '';display: block;
+            border: 5px solid red;
+        }
+        .ribbon span{
+            position: absolute;
+            display: block;
+            width: 225px;
+            padding: 15px 0;
+            background-color: red;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+            color: #fff;
+            font: 700 18px/1 'Lato', sans-serif;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .ribbon-top-right{
+            top: -12px;
+            right: -12px;
+        }
+        .ribbon-top-right::before, .ribbon-top-right::after{
+            border-top-color: transparent;
+            border-right-color: transparent;
+        }
+        .ribbon-top-right::before{
+            top: 0;
+            left: 0;
+        }.ribbon-top-right::after{
+            bottom: 0;right: 0;
+        }.ribbon-top-right span{
+            left: -25px;
+            top: 30px;
+            transform: rotate(45deg);
+        }
+        small{
+            font-size: 12px;
+        }
+        .cart{
+            line-height: 1;
+        }
+        .icon{
+            background-color: #eee;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+        .pic{
+            width: 70px;
+            height: 90px;
+            border-radius: 5px;
+        }
+        td{
+            vertical-align: middle;
+        }
+        .red{
+            color: #fd1c1c;
+            font-weight: 600;
+        }
+        .b-bottom{
+            border-bottom: 2px dotted black;
+            padding-bottom: 20px;
+        }
+        p{
+            margin: 0px;
+        }
+        table input{
+            width: 40px;
+            border: 1px solid #eee;
+        }
+        input:focus{
+            border: 1px solid #eee;
+            outline: none;
+        }
+        .round{
+            background-color: #eee;
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center}
+        .payment-summary .unregistered{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eee;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        .payment-summary input{
+            width: 100%;
+            margin-right: 20px;
+        }
+        .payment-summary .sale{
+            width: 100%;
+            background-color: #e9b3b3;
+            text-transform: uppercase;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5PX 0;
+        }
+        .red{
+            color: #fd1c1c;
+        }
+        .del{
+            width: 35px;
+            height: 35px;
+            object-fit: cover;
+        }
+        .delivery .card{
+            padding: 10px 5px;
+        }
+        .option{
+            position: relative;
+            top: 50%;
+            display: block;
+            cursor: pointer;
+            color: #888;
+        }
+        .option input{
+            display: none;
+        }
+        .checkmark{position: absolute;top: 40%;left: -25px;height: 20px;width: 20px;background-color: #fff;border: 1px solid #ccc;border-radius: 50%}.option input:checked~.checkmark:after{display: block}.option .checkmark:after{content: "\2713";width: 10px;height: 10px;display: block;position: absolute;top: 30%;left: 50%;transform: translate(-50%, -50%) scale(0);transition: 200ms ease-in-out 0s}.option:hover input[type="radio"]~.checkmark{background-color: #f4f4f4}.option input[type="radio"]:checked~.checkmark{background: #ac1f32;color: #fff;transition: 300ms ease-in-out 0s}.option input[type="radio"]:checked~.checkmark:after{transform: translate(-50%, -50%) scale(1);color: #fff}
+
+
+    </style>
+
+    <main class="main bg-light">
+        {% include 'alerts/alert.html' %}
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb d-flex justify-content-between align-items-center">
+                    <a href="{% url 'core:index' %}"><h2 class="fw-bold">AdepaMarket</h2></a>
+                    <h4>Place your order</h4>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-phone"></i> Need Help?<br><a class="text-primary" href="">Contact Us</a></span>
+                        <span><i class="fas fa-shopping-bag"></i> Easy <br>Returns</span>
+                        <span><i class="fas fa-shield"></i> Secure <br>Payment</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mb-80 mt-50">
+            <div class="row">
+                <div class="col-lg-8">
+                    
+                    <div class="border bg-white shadow-sm rounded-3 mb-30">
+                        <h5 class="d-flex pt-15 pb-15 ml-15 mr-15 justify-content-between align-items-center">
+                            <span class="text-uppercase fw-bold"><i class="fas fa-check text-success"></i> 1. Customer Address & Location</span>
+                            <span><a class="text-primary" href="#">Change <i class="fas fa-arrow-right"></i></a></span>
+                        </h5>
+                        <hr>
+                        <div class="mx-2">
+                            <input class="w-100" type="text" id="locationName" readonly>
+                        </div>
+                        <h6 class="ml-15">Add and activate your desire address for delivery in your <span>Dashborad</span></h6>
+                        <button class="ml-15 text-primary accordion">Click here to see how</button>
+                        <div class="panel mb-30">
+                        </div>
+                        <div id="map"></div>
+                    </div>
+
+
+                    <div class="border bg-white shadow-sm rounded-3 mb-30">
+                        <h5 class="d-flex pt-15 pb-15 ml-15 mr-15 justify-content-between align-items-center">
+                            <span class="text-uppercase fw-bold"><i class="fas fa-check text-success"></i> 2. Delivery Details</span>
+                            <span><a class="text-primary font-xs" href="#">Change <i class="fas fa-arrow-right"></i></a></span>
+                        </h5>
+                        <hr>
+                        <div class="px-3 pb-10">
+                            <h6 class="d-flex justify-content-between align-items-center">
+                                <span>Door Delivery</span>
+                                <span class="text-warning"><i class="fas fa-truck"></i></span>
+                            </h6>
+                            <p class="text-muted font-xs">Delivery between <span class="text-dark fw-bold">{{today|date:"d M"}}</span> and <span class="text-dark fw-bold">{{over_morrow|date:"d M"}}</span></p>
+                        </div>
+                        <div class="row col-12 mx-0">
+                            {% for c in shopcart %}
+                                <div class="col-lg-6 col-md-5">
+                                    <div class="border bg-white rounded-3 mb-30">
+                                        <h5 class="d-flex pt-10 pb-0 mx-2 justify-content-between align-items-center">
+                                            <span class="fw-bold">Door Delivery</span>
+                                            <span><a class="text-primary font-xs" href="#">Change <i class="fas fa-arrow-right"></i></a></span>
+                                        </h5>
+                                        <p class="text-muted ml-10 font-xs">Delivery between {{default_delivery_options}}</span> By {{c.product.vendor.name|title}}</p>
+                                        <hr>
+                                        <div class="ml-20 mr-15 pb-10">
+                                            <h6 class="d-flex">
+                                                <div class="product-thumbnail">
+                                                    <a class="product-thumbnail" href="{{c.product.get_absolute_url}}">
+                                                        {% if c.product.variant != 'None' %}
+                                                        <img class="product-thumbnail mn-200" src="{{c.variant.image.url}}" width="50" alt="">
+                                                        {% else %}
+                                                        <img class="product-thumbnail mn-200" src="{{c.product.image.url}}"  width="50" alt="">
+                                                        {% endif %}
+                                                     </a>
+                                                </div>&nbsp;
+                                                <div>
+                                                    <span class="text-muted">{{c.product.title|title|truncatechars:30}}</span>
+                                                    <p class="text-muted">QTY: <span class="text-dark fw-bold">{{c.quantity}}</span></p>
+                                                </div>
+                                            </h6>
+                                        
+                                            <p class="font-xxs">Delivery options available:</p>
+                                                {% for product_delivery_option in c.product.productdeliveryoption_set.all %}
+                                                    <input 
+                                                        type="radio" 
+                                                        id="delivery_option_{{ product_delivery_option.delivery_option.id }}" 
+                                                        name="delivery_{{ c.product.id }}" 
+                                                        value="{{ product_delivery_option.delivery_option.id }}" 
+                                                        class="delivery-option" 
+                                                        {% if product_delivery_option.default == True %}checked{% endif %}
+                                                    >
+                                                    <label class="font-xs" for="delivery_option_{{ product_delivery_option.delivery_option.id }}">
+                                                        {{ product_delivery_option.delivery_option.name }} - {{product_delivery_option.get_delivery_date_range}}
+                                                    </label><br>
+                                                {% endfor %}
+                                            <p class="font-xxs text-muted">Total Delivery Fee: <span class="total_delivery_fee">{{currency}}{{total_delivery_fee|multiply:rate|floatformat:2|intcomma}}</span></p>
+                                        </div>
+                                    </div>
+                                </div>          
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                           
+                        });
+                        
+                        
+                    </script>
+
+                    <div class="border bg-white shadow-sm rounded-3 mb-30">
+                        <h5 class="d-flex pt-15 pb-15 ml-15 mr-15 justify-content-between align-items-center">
+                            <span class="text-uppercase fw-bold"><i class="fas fa-check text-success"></i> 3. Payment Method</span>
+                            <span><a class="text-primary" href="#">Change <i class="fas fa-arrow-right"></i></a></span>
+                        </h5>
+                        <hr>
+                        <h6 class="ml-15">Add and activate your desire address for delivery in your <span>Dashborad</span></h6>
+                        <button class="ml-15 text-primary accordion">Click here to see how</button>
+                        <div class="panel ml-15 mb-30">
+                            <p>1. Go to your <a class="text-primary" href="#">Dashboard <i class="fal fa-settings"></i></a></p>
+                            <p>2. Select MY ADDRESS tab</p>
+                            <p>3. Add new address if you do not have one or activate only one if they're plenty</p>
+                            <p>4. Come back and continue your order</p>
+                        </div>
+
+                        <div class="pt-15 pb-15 ml-15 mr-15 mb-20">
+                            <div class="border mb-20 py-3">
+                                <input class="ml-15" type="radio" name="momo" id="momo">
+                                <span class="ml-5">Mobile Money<img src="{% static 'assets/imgs/theme/payment-method-2.png' %}" alt=""></span>
+                            </div>
+                            <div class="border mb-20 py-3">
+                                <input class="ml-15" type="radio" name="momo" id="momo">
+                                <span class="ml-5">Debit/Credit Card<img src="{% static 'assets/imgs/theme/payment-method.png' %}" alt=""></span>
+                            </div>
+                        </div>
+                        <p class="pb-15 ml-15 mr-15"><span class="fas fa-lock mr-10"></span>Secure Payment with SSL Encryption</p>
+                        <p class="pb-15 ml-15 mr-15 mb-20 font-xs text-muted">Having problem with your payment? Please check <a class="text-primary" href="#">this article</a></p>
+                    </div>
+                </div>
+                
+
+                <!-- Cart Summary -->
+                <div class="col-md-5 col-lg-3">
+                    <div class="pr-10 pl-10 border bg-white rounded-3 shadow-sm">
+                       <h5 class="text-uppercase pt-15 d-flex justify-content-between align-items-center my-0 fw-bold">
+                          <span>Order Summary</span>
+                       </h5>
+                       <hr>
+                       <div class="mb-20">
+                          <div class="d-flex justify-content-between align-items-center">
+                             <h6 class="text-muted">Items total ({{cart_count}})</h6>
+                             <h6 class="fw-bold justify-content-between">{{currency}} {{ total|multiply:rate|floatformat:"2"|intcomma }}</h6>
+                          </div>
+                          <hr>
+                          <div class="d-flex justify-content-between align-items-center">
+                             <h6 class="text-muted">Delivery fees</h6>
+                             <h6 class="total_delivery_fee fw-bold justify-content-between">{{currency}} {{total_delivery_fee|multiply:rate|floatformat:2|intcomma}}</h6>
+                          </div>
+                          <hr>
+                          <div class="d-flex justify-content-between align-items-center">
+                             <h6 class="text-muted">Packaging fees</h6>
+                             <h6 class="fw-bold justify-content-between">{{currency}} {{total_packaging_fee|multiply:rate|floatformat:2|intcomma}}</h6>
+                          </div>
+                          <hr>
+                          <div class="d-flex justify-content-between align-items-center">
+                             <h6 class="fw-bold">Total</h6>
+                             <h4 class="over_all fw-bold justify-content-between">{{currency}} {{grand_total|floatformat:2|intcomma}}</h4>
+                          </div>
+                            <hr>
+                            <form method="POST" action="{% url 'order:checkout' %}" class="card p-2">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                  <input type="text" class="form-control" name="coupon_code" placeholder="Enter coupon code">
+                                  <button type="submit" class="btn btn-secondary">Apply</button>
+                                </div>
+                                {% if applied_coupon %}
+                                    <p>Applied Coupon: {{ applied_coupon.code }} - Discount: {{ discount_amount }} GHS</p>
+                                    <form method="POST" action="{% url 'order:remove_coupon' %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-danger w-100 rounded-3 shadow text-uppercase" type="submit">Remove Coupon</button>
+                                    </form>
+                                {% endif %}
+                            </form>
+                            <hr>
+                            <form action="{% url 'payments:paystack_pay' %}" method="post">
+                                {% csrf_token %}
+                                <button class="tp-btn-h1 w-100 rounded-3 shadow text-uppercase">Confirm Order</button>
+                            </form>
+                       </div>
+                    </div>
+                    <p class="my-0 py-0 font-xxs text-center text-muted">By proceeding, you are automatically accepting</p>
+                    <p class="text-center font-xs"><a href="#" class="text-primary">Terms & Conditions</a></p>
+                </div>
+                <!-- End cart Summary -->
+            </div>
+        </div>
+        <input type="hidden" id="main_address" readonly>
+
+        <input readonly id="user_long_" type="hidden" value="{{user_profile.longitude}}">
+        <input readonly id="user_lat_" type="hidden" value="{{user_profile.latitude}}">
+    </main>
+
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        for (i = 0; i < acc.length; i++) {
+          acc[i].addEventListener("click", function() {
+            /* Toggle between adding and removing the "active" class,
+            to highlight the button that controls the panel */
+            this.classList.toggle("active");
+      
+            /* Toggle between hiding and showing the active panel */
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+              panel.style.display = "none";
+            } else {
+              panel.style.display = "block";
+            }
+          });
+        }
+    </script>
+
+    <div>
+        <form id="locationForm">
+           <input type="hidden" id="latitude" name="latitude" readonly>
+           <br>
+           <input type="hidden" id="longitude" name="longitude" readonly>
+           <br>
+           {% comment %} <button type="submit">Submit</button> {% endcomment %}
+        </form>
+
+     </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize and display the map
+        document.addEventListener("DOMContentLoaded", function () {
+ 
+            const deliveryOptionRadios = document.querySelectorAll('.delivery-option');
+            deliveryOptionRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const productId = this.name.split('_')[1];
+                    const selectedOption = this.value;
+
+                    console.log(productId)
+                    console.log(selectedOption)
+        
+                    fetch(`/update_delivery_fee/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector("input[name='csrfmiddlewaretoken']").value,
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            delivery_option_id: selectedOption
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.total_delivery_fee !== undefined) {
+                            const grandTotalElement = document.querySelector('.over_all');
+                            //const totalElement = document.querySelector('.over_all');
+                            grandTotalElement.innerText = data.grand_total
+                            const totalDeliveryFeeElements = document.querySelectorAll('.total_delivery_fee');
+                            totalDeliveryFeeElements.forEach(element => {
+                                element.innerText = data.total_delivery_fee;
+                            });
+                        } else if (data.error) {
+                            console.error('Error:', data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+
+            const savedLatitude = document.getElementById('user_lat_').value;
+            const savedLongitude = document.getElementById('user_long_').value;
+            const map = L.map("map").setView([savedLatitude, savedLongitude], 13); // Default center and zoom level
+
+            // Add Leaflet tile layer - replace with your preferred tile provider
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                
+            }).addTo(map);
+
+            // Initialize marker with a default position
+            const marker = L.marker([savedLatitude, savedLongitude], {
+                draggable: true
+            }).addTo(map);
+
+
+            // Function to update marker position and form fields
+            function updateMarkerPosition(e) {
+                const latlng = marker.getLatLng();
+                document.getElementById("latitude").value = latlng.lat.toFixed(6);
+                document.getElementById("longitude").value = latlng.lng.toFixed(6);
+                reverseGeocode(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+                updateProfile(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+            }
+
+            // Event listener for dragging the marker
+            marker.on("dragend", updateMarkerPosition);
+
+            // Center map based on user's current location (optional)
+            if (navigator.geolocation && !savedLatitude && !savedLongitude ) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    console.log(position)
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accu: position.coords.accuracy,
+                    };
+     
+                    //const circle = L.circle([userLocation.lat.toFixed(6), userLocation.lng.toFixed(6)], {radius: userLocation.accu}).addTo(map)
+                    map.setView(userLocation, 13); // Set map view to user's location
+                    marker.setLatLng(userLocation); // Place marker at user's location
+                    updateMarkerPosition(); // Update form fields
+                    
+              });
+            }
+
+            function reverseGeocode(lat, lng) {
+                const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.display_name) {
+                            document.getElementById("locationName").value = data.display_name;
+                            document.getElementById("main_address").value = data.display_name;
+                            console.log(data)
+                            console.log(data.address.country)
+                            console.log(data.address.city)
+                            console.log(data.address.state)
+                        } else {
+                            document.getElementById("locationName").value = "Location name not found";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById("locationName").value = "Error retrieving location name";
+                    });
+            }
+
+            // Submit form handler (you can adapt this to your backend handling)
+            const form = document.getElementById("locationForm");
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                const latitude = document.getElementById("latitude").value;
+                const longitude = document.getElementById("longitude").value;
+                // Here you can submit the latitude and longitude to your server
+                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                alert(`Location submitted: Latitude ${latitude}, Longitude ${longitude}`);
+                // You might want to redirect or perform further actions after submission
+            });
+
+            function updateProfile(latitude, longitude) {
+                const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+                const location = document.getElementById('').value;
+                console.log(latitude)
+                console.log(longitude)
+                console.log(location)
+            
+                fetch("{% url 'order:update_profile_location' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ latitude, longitude, location })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Profile updated successfully.');
+                        // Call updateDeliveryOption function after successful profile update
+                    } else {
+                        console.error('Failed to update profile.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            
+        });
+
+
+    </script>
+
+<script src="{% static 'assets/js/vendor/jquery-3.6.0.min.js' %}"></script>
+      
+{% endblock content %}
+    
+

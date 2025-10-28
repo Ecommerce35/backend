@@ -1,0 +1,443 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static '' %}assetss/css/css1.css">
+    <style>
+
+          /* Hide the modal by default */
+        .sizeGuide .city {
+            display:none
+        }
+
+        .w3-modal {
+            padding-top: 30px!important;
+            z-index: 9999!important;
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+        .sizeGuide .w3-container {
+        padding-left: 1%;
+            padding-right: 1%;
+        }
+
+        /*Styling the Size Chart Button that opens the Modal*/
+        .buttstyle {
+            font-family: "Karla", sans-serif;
+            font-style: normal;
+            font-size: 15px;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            line-height: 1em;
+            color: grey;
+            background-color: transparent;
+            white-space: normal!important;
+        }
+        .buttstyle:hover {
+            color: grey;
+            background-color: lightgrey;
+        }
+
+        /* INSIDE THE MODAL */
+
+        .sizeguide-header {
+            font-family: "Karla", sans-serif;
+            font-size:25px; 
+            font-weight:400;
+            padding: 1.5%;
+        padding-left: 2%;
+            color: white;
+            background-color: black;
+        }
+        .sizeguide-close {
+        font-family: "Karla", sans-serif;
+            font-size: 20px;
+        text-transform: capitalize;
+        color: white;
+        background-color: black;
+        }
+        .tablink-buttons {
+            text-transform: uppercase;
+        font-family: "Karla", sans-serif;
+        }
+
+        .guide-title {
+            padding-top: 1.5%!important;
+        }
+        .guide-section {
+            color: #616161;
+            background-color: #e3e3e3!important;
+            padding: 3.5%!important;
+        }
+
+        .sizechart-style {
+            font-size: 20px;
+        font-family: "Karla", sans-serif;
+        background-color: #507F99;
+        color: white;
+        text-transform: uppercase;
+        }
+        .city-yourself, .city-product {
+            overflow: auto!important;
+        }
+        .myBox {
+        width: 200px;
+        height: 300px;
+        object-fit: cover!important;
+        }  
+
+    </style>
+</head>
+  
+  <!-- The Button that opens the modal -->
+
+  <!-- Inside the Modal -->
+<div id="id01" class="w3-modal sizeGuide">
+  
+ <div class="w3-modal-content w3-card-4 w3-animate-zoom">
+  <header class="w3-container sizeguide-header"> 
+   <span onclick="document.getElementById('id01').style.display='none'" 
+   class="w3-button w3-display-topright sizeguide-close">&times;</span>
+   <div id="guide-top" class="sizeguide-header">Size Guide</div>
+  </header>
+
+  <div class="w3-bar w3-border-bottom">
+	  	<button class="tablink tablink-buttons w3-bar-item w3-button" onclick="openCity(event, 'yourself')">Measure Yourself</button>
+   		<button class="tablink tablink-buttons w3-bar-item w3-button" onclick="openCity(event, 'product')">Product Measurements</button>
+  </div>
+
+  <div id="yourself" class="w3-container city">
+  <div class="w3-container">
+	  <div class="w3-container">
+		  <h3 class="guide-title">Measure Yourself</h3>
+
+			<p>For the most accurate fit, it is recommended that you measure a garment you own and compare those measurements to the ones in the "Product Measurements" tab.</p>
+		  <div class="guide-section">
+			  <center><img class="myBox" src="https://files.cdn.printful.com/upload/measure-yourself/4f/4f16539cf48b1adf1228f8fa059efee3_l?v=1619159786"/></center>
+			  <p>The male model is wearing a size M. He's 6.2'' (190 cm) tall; chest circumference 37.7'' (96 cm).</p>
+			  <p><strong>A Length</strong></p>
+			  <p>Place the end of the tape beside the collar at the top of the tee (Highest Point Shoulder). Pull the tape measure to the bottom of the shirt.</p>
+			  <p><strong>B Width</strong></p>
+			  <p>Measure yourself around the fullest part of your chest. Keep the tape measure horizontal.</p>
+			  <p><strong>C Sleeve Length</strong></p>
+			  <p>Place the end of the tape at the center back of the collar, then pull the tape measure along the top seam of the sleeve. When you get to the shoulder hold the tape in place at the shoulder and continue to pull down the sleeve until you reach the hem of the sleeve.</p>
+		  </div>
+		  <h3 class="guide-title">Find Your Size</h3>
+		  
+      <div class="sizechart-style">
+        <button onclick="sizechart_function('measure-yourself-chart')" class="sizechart-style w3-button w3-block w3-left-align">
+          Size Chart
+        </button>
+      </div>
+		  
+		  <div id="measure-yourself-chart" class="w3-hide">
+			  <div class="w3-bar w3-border-bottom">
+			   <button class="tablink-yourself tablink-buttons w3-bar-item w3-button" onclick="openCity_yourself(event, 'yourselfinches')">Inches</button>
+			   <button class="tablink-yourself tablink-buttons w3-bar-item w3-button" onclick="openCity_yourself(event, 'yourselfcentimeters')">Centimeters</button>
+			  </div>
+
+			  <div id="yourselfinches" class="w3-container city-yourself">
+			  <div><br> <!-- INCHES -->
+			   <table class="w3-table w3-striped">
+				   <tr>
+            <th></th>
+            <th>XS</th>
+            <th>S</th>
+            <th>M</th>
+            <th>L</th>
+            <th>XL</th>
+          </tr>
+          <tr>
+            <td><b>Length</b></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><b>Width</b></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><b>Sleeve</b></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+			   </table>
+			  <p><small>Measurements are provided by suppliers. Product measurements may vary by up to 2".</small>
+			  </p>
+				  <p>If you're still unsure which size to order, you can measure a garment you own and compare those measurements to the ones in the "<a href="#guide-top">Product Measurements</a>" tab.
+				   </p>
+			  </div>
+			  </div>
+
+
+			  <div id="yourselfcentimeters" class="w3-container city-yourself">
+			   <div><!-- CENTIMETERS -->
+				   <br>
+			   <table class="w3-table w3-striped">
+				    <tr>
+              <th></th>
+              <th>XS</th>
+              <th>S</th>
+              <th>M</th>
+              <th>L</th>
+              <th>XL</th>
+            </tr>
+            <tr>
+              <td><b>Length</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Width</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Sleeve</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+			   </table>
+			  <p><small>Measurements are provided by suppliers. Product measurements may vary by up to 5 cm.</small>
+			  </p>
+           <p>If you're still unsure which size to order, you can measure a garment you own and compare those measurements to the ones in the "Product Measurements" tab.
+				   </p>
+			  </div>
+			  </div>
+			</div><br>
+	  </div>
+  </div>
+  </div>
+
+  
+  
+  
+  <div id="product" class="w3-container city">
+   <div class="w3-container">
+	  <div class="w3-container">
+		  <h3 class="guide-title">Product Measurements</h3>
+		  <p>Measure one of your products at home and compare with the measurements you see in this guide.</p>
+		  	<div class="guide-section">
+			  <center><img class="myBox" style="width: 300px;" src="https://files.cdn.printful.com/upload/product-measure/a2/a20afd850eeceb1508545fa3a2bf583c_l?v=1619159786"></center>
+			  <p><strong>A Length</strong></p>
+			  <p>Place the end of the tape beside the collar at the top of the tee (Highest Point Shoulder). Pull the tape measure to the bottom of the shirt.</p>
+			  <p><strong>B Width</strong></p>
+			  <p>Place the end of the tape at the seam under the sleeve and pull the tape measure across the shirt to the seam under the opposite sleeve.</p>
+			  <p><strong>C Sleeve Length</strong></p>
+			  <p>Place the end of the tape at the center back of the collar, then pull the tape measure along the top seam of the sleeve. When you get to the shoulder hold the tape in place at the shoulder and continue to pull down the sleeve until you reach the hem of the sleeve.</p>
+		  </div>
+		  <h3 class="guide-title">Find Your Size</h3>
+		  
+      <div class="sizechart-style">
+        <button onclick="sizechart_function('find-size-chart')" class="w3-button w3-block w3-left-align sizechart-style">
+          Size Chart
+        </button>
+      </div>
+		  
+		  <div id="find-size-chart" class="w3-hide">
+			  <div class="w3-bar w3-border-bottom">
+			   <button class="tablink-product tablink-buttons w3-bar-item w3-button" onclick="openCity_product(event, 'productinches')">Inches</button>
+			   <button class="tablink-product tablink-buttons w3-bar-item w3-button" onclick="openCity_product(event, 'productcentimeters')">Centimeters</button>
+			  </div>
+
+			  <div id="productinches" class="w3-container city-product">
+			  <div> <!-- INCHES -->
+          <p>Measurments taken when product laid flat.</p>
+			   <table class="w3-table w3-striped">
+				    <tr>
+              <th></th>
+              <th>XS</th>
+              <th>S</th>
+              <th>M</th>
+              <th>L</th>
+              <th>XL</th>
+            </tr>
+            <tr>
+              <td><b>Length</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Width</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Sleeve</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+			   </table>
+			  <p><small>Measurements are provided by suppliers. Product measurements may vary by up to 2".</small>
+			  </p>
+			  </div>
+			  </div>
+
+
+			  <div id="productcentimeters" class="w3-container city-product">
+			   <div><!-- CENTIMETERS -->
+           <p>Measurments taken when product laid flat.</p>
+			   <table class="w3-table w3-striped">
+            <tr>
+              <th></th>
+              <th>XS</th>
+              <th>S</th>
+              <th>M</th>
+              <th>L</th>
+              <th>XL</th>
+            </tr>
+            <tr>
+              <td><b>Length</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Width</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Sleeve</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+			   </table>
+			  <p><small>Measurements are provided by suppliers. Product measurements may vary by up to 5 cm.</small>
+			  </p>
+			  </div>
+			  </div>
+			</div><br>
+	  </div>  
+  </div>
+  </div>
+	 
+	 <div class="w3-container sizeguide-close">
+	   <button id="sizeguide-close-button" class="w3-button sizeguide-close w3-right" onclick="document.getElementById('id01').style.display='none'">Close</button>
+    </div>
+	 
+	</div>
+</div>
+
+	<script>
+		var divs = document.querySelectorAll(".pink");
+		for (var i = 0; i < divs.length; i++){
+			divs[i].classList.add("el-comp-lt-pink");
+		}
+	</script>
+	 
+<!-------------------------------------------- MODAL-Y THINGS ----------------------------------------->
+<script>
+	function sizechart_function(id) {
+	  var x = document.getElementById(id);
+	  if (x.className.indexOf("w3-show") == -1) {
+		x.className += " w3-show";
+	  } else { 
+		x.className = x.className.replace(" w3-show", "");
+	  }
+	}
+</script>
+	
+<script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+	body.style.overflow = "visible";
+  }
+}
+</script>
+
+	<!--------------------------------------- INSIDE THE MODAL -------------------------------------->
+<!-- Measure Yourself and Product Measurment Buttons -->
+<script>
+document.getElementsByClassName("tablink")[0].click();
+
+function openCity(evt, cityName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("city");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].classList.remove("w3-light-grey");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.classList.add("w3-light-grey");
+}
+</script>
+	
+	<!-- Measure Yourself Inches and Centimeters Buttons -->
+<script>
+document.getElementsByClassName("tablink-yourself")[0].click();
+
+function openCity_yourself(evt, cityName) {
+  var i, x, tablinks_yourself;
+  x = document.getElementsByClassName("city-yourself");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks_yourself = document.getElementsByClassName("tablink-yourself");
+  for (i = 0; i < x.length; i++) {
+    tablinks_yourself[i].classList.remove("w3-light-grey");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.classList.add("w3-light-grey");
+}
+</script>
+	
+	<!-- Product Inches and Centimeters Buttons -->
+<script>
+document.getElementsByClassName("tablink-product")[0].click();
+
+function openCity_product(evt, cityName) {
+  var i, x, tablinks_product;
+  x = document.getElementsByClassName("city-product");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks_product = document.getElementsByClassName("tablink-product");
+  for (i = 0; i < x.length; i++) {
+    tablinks_product[i].classList.remove("w3-light-grey");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.classList.add("w3-light-grey");
+}
+</script>	

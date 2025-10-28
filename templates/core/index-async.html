@@ -1,0 +1,33 @@
+{% for p in books %}
+    <div class="product">
+        <span class="product-label label-sale">Sale</span>
+        <figure class="product-media">
+            <a href="{{p.get_absolute_url}}">
+                <img src="{{p.image.url}}" alt="Product image" class="product-image">
+            </a>
+        </figure><!-- End .product-media -->
+
+        <div class="product-body">
+            <div class="product-cat">
+                by <a href="#">{{p.brand.name}}</a>
+            </div><!-- End .product-cat -->
+            <h3 class="product-title"><a href="{{p.get_absolute_url}}">{{p.title|truncatechars:16}}</a></h3><!-- End .product-title -->
+            <div class="product-price">
+                <span class="new-price">GHS{{p.price}}</span>
+            </div><!-- End .product-price -->
+
+            <div class="product-footer">
+                <div class="ratings-container">
+                    <div class="ratings">
+                        <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                    </div><!-- End .ratings -->
+                    <span class="ratings-text">( 10 Reviews )</span>
+                </div><!-- End .rating-container -->
+                {% comment %} <div class="product-action">
+                    <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                    <a href="#" class="btn-product btn-wishlist"><span>Add to Wishlist</span></a>
+                </div><!-- End .product-action --> {% endcomment %}
+            </div><!-- End .product-footer -->
+        </div><!-- End .product-body -->
+    </div><!-- End .product -->
+{% endfor %}
