@@ -1029,15 +1029,15 @@ class SubcategoryListView(APIView):
         category_obj = get_object_or_404(Category, slug=slug, main_category__slug=category)
         
         # Serialize the main category data
-        category_data = CategorySerializer(category_obj).data
+        category_data = CategorySerializer(category_obj, context={'request': request}).data
         
         # Get other categories, excluding the main one
         other_categories = Category.objects.exclude(slug=slug)
-        other_categories_data = CategorySerializer(other_categories, many=True).data
+        other_categories_data = CategorySerializer(other_categories, many=True, context={'request': request}).data
         
         # Get subcategories related to the main category
         subcategories = Sub_Category.objects.filter(category=category_obj)
-        subcategories_data = SubCategorySerializer(subcategories, many=True).data
+        subcategories_data = SubCategorySerializer(subcategories, many=True, context={'request': request}).data
 
         # Construct the response
         data = {
@@ -1062,9 +1062,9 @@ class CategoryListView(APIView):
         sub_categories = Category.objects.filter(main_category=category)
         
         # Serialize the data
-        category_data = MainCategorySerializer(category).data
-        other_categories_data = MainCategorySerializer(other_categories, many=True).data
-        sub_categories_data = CategorySerializer(sub_categories, many=True).data
+        category_data = MainCategorySerializer(category, context={'request': request}).data
+        other_categories_data = MainCategorySerializer(other_categories, many=True, context={'request': request}).data
+        sub_categories_data = CategorySerializer(sub_categories, many=True, context={'request': request}).data
         
         # Return the data in the response
         return Response({

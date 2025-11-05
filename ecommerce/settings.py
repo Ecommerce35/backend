@@ -247,8 +247,8 @@ EMAIL_HOST_USER = "apikey"   # keep this literal
 EMAIL_HOST_PASSWORD = config("SENDGRID_API_KEY")
 
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache' # If you want to use cache-based sessions(REDIS)
-# SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db' # If you want to use cached DB sessions(REDIS + DB)
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache' # If you want to use cache-based sessions(REDIS)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db' # If you want to use cached DB sessions(REDIS + DB)
 
 SESSION_CACHE_ALIAS = 'default'
 
