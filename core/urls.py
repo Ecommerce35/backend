@@ -8,7 +8,6 @@ urlpatterns = [
     path('viewed-products/', ViewedProductsView.as_view(), name='viewed-products'),
     path('searched-products/', SearchedProducts.as_view(), name='searched-products'),
     path('recommended-products/', RecommendedProducts.as_view(), name='recommended-products'),
-    path('product/<slug:slug>/<int:id>/<slug:sub_category_slug>/', ProductDetailAPIView.as_view(), name='product-detail-api'),
     path('products/<slug:slug>/increment-view/', IncrementViewCount.as_view(), name='increment-view-count'),
     path('add-review/', AddProductReviewView.as_view(), name='product-review-create'),
     path('user/<int:user_id>/', get_user_data, name='get_user_data'),
@@ -23,7 +22,6 @@ urlpatterns = [
     path('cart/progress/', UserProgressCheck.as_view(), name='cart_progress'),
     path('checkout/', CheckoutAPIView.as_view(), name='checkout'),
     path('update-delivery-option/', UpdateDeliveryOptionAPIView.as_view(), name='update'),
-    path('ajaxcolor/', AjaxColorAPIView.as_view(), name='change_color'),
 
     path('products/<slug:slug>/', CategoryProductListView.as_view(), name='category-product-list'),
     path('brand/<slug:slug>/', BrandProductListView.as_view(), name='brand-product-list'),

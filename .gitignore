@@ -6,11 +6,12 @@ media/
 staticfiles/
 
 # Environments
-.env
+.config
 .venv/
 venv/
-env/
+config/
 ENV/
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -2,21 +2,17 @@ import environ
 
 import os
 from pathlib import Path
+from decouple import config
 
-env = environ.Env(
-    DEBUG=(bool, False)
-)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(BASE_DIR / '.env')
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = ['*','192.168.110.89', 'localhost', '127.0.0.1']
 
@@ -237,8 +233,8 @@ AUTHENTICATION_BACKENDS = [
 AUTH_USER_MODEL = 'userauths.User'
 
 ######################################
-PAYSTACK_SECRET_KEY = env('PAYSTACK_SECRET_KEY')
-PAYSTACK_PUBLIC_KEY = env('PAYSTACK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 ######################################
 
 # Emailing settings
@@ -248,7 +244,7 @@ EMAIL_HOST = "smtp.sendgrid.net"
 EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"   # keep this literal
-EMAIL_HOST_PASSWORD = env("SENDGRID_API_KEY")
+EMAIL_HOST_PASSWORD = config("SENDGRID_API_KEY")
 
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache' # If you want to use cache-based sessions(REDIS)

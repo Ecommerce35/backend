@@ -70,13 +70,13 @@ class MainAPIView(APIView):
         most_popular = Product.objects.filter(status='published').annotate(average_rating=Avg('reviews__rating'), review_count=Count('reviews')).order_by('-views')[:8]
 
         category = Category.objects.all()
-        category_data = CategorySerializer(category, many=True).data
+        category_data = CategorySerializer(category, many=True, context={'request': request}).data
 
 
         specific_category = Category.objects.filter().first()
         # Get and serialize subcategory data
         sub_cat = Sub_Category.objects.filter(category=specific_category)[0:4]
-        sub_data = SubCategorySerializer(sub_cat, many=True).data
+        sub_data = SubCategorySerializer(sub_cat, many=True, context={'request': request}).data
         
         
         # Serialize new products with ratings
@@ -94,15 +94,15 @@ class MainAPIView(APIView):
 
         # Get and serialize slider data
         sliders = Slider.objects.all()
-        slider_data = SliderSerializer(sliders, many=True).data
+        slider_data = SliderSerializer(sliders, many=True, context={'request': request}).data
 
         # Get and serialize banner data
         banners = Banners.objects.all()
-        banner_data = BannersSerializer(banners, many=True).data
+        banner_data = BannersSerializer(banners, many=True, context={'request': request}).data
 
         # Get and serialize subcategory data
         subcategories = Sub_Category.objects.all()
-        subcategory_data = SubCategorySerializer(subcategories, many=True).data
+        subcategory_data = SubCategorySerializer(subcategories, many=True, context={'request': request}).data
         
         context = {
             "new_products": products_with_details,
@@ -110,7 +110,7 @@ class MainAPIView(APIView):
             "sliders": slider_data,
             "banners": banner_data,
             "sub_data": sub_data,
-            "main": CategorySerializer(specific_category).data,
+            "main": CategorySerializer(specific_category, context={'request': request}).data,
             "subcategories": subcategory_data,
             "category_data": category_data,
         }
@@ -325,7 +325,7 @@ class VendorDetailView(APIView):
             return Response({'error': 'Vendor not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Serialize the vendor data
-        vendor_serializer = VendorSerializer(vendor)
+        vendor_serializer = VendorSerializer(vendor, context={'request': request})
         
         # Serialize the products
         product_serializer = ProductSerializer(products, many=True, context={'request': request})
@@ -361,7 +361,7 @@ class VendorDetailView(APIView):
             'vendor': vendor_serializer.data,
             'products': products_with_details,
             'average_rating': average_rating,
-            "reviews": ProductReviewSerializer(reviews, many=True).data,
+            "reviews": ProductReviewSerializer(reviews, many=True, context={'request': request}).data,
             'today_operating_hours': OpeningHourSerializer(today_operating_hours).data,
             'followers_count': vendor.followers.count(),
             'is_following': is_following,
@@ -407,244 +407,6 @@ class UpdateProductView(APIView):
             except Product.DoesNotExist:
                 return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
         return Response({"message": "View already recorded"}, status=status.HTTP_200_OK)
-
-# class ProductDetailAPIView(APIView):
-
-#     # permission_classes = (AllowAny,)
-#     serializer_class = ProductSerializer
-
-#     def get(self, request, slug, id, sub_category_slug):
-#         product = get_object_or_404(
-#             Product.objects.annotate(
-#                 average_rating=Avg('reviews__rating'),
-#                 review_count=Count('reviews')
-#             ),
-#             slug=slug, 
-#             status='published', 
-#             sub_category__slug=sub_category_slug
-#         )
-
-#         is_following = False
-#         if request.user.is_authenticated:
-#             is_following = product.vendor.followers.filter(id=request.user.id).exists()
-
-#         # Retrieve all related images
-#         p_images = product.p_images.all()
-        
-#         # Serialize the product images
-#         p_image_data = ProductImageSerializer(p_images, many=True).data
-        
-#         # Get related products
-#         products = Product.objects.filter(sub_category=product.sub_category, status="published").exclude(slug=slug).order_by('-date')[:10]
-#         vendor_products = Product.objects.filter(vendor=product.vendor, status="published").exclude(slug=slug).order_by('-date')[:10]
-
-#         # Reviews and Ratings
-#         reviews = ProductReview.objects.filter(product=product, status=True).order_by("-date")
-        
-
-#         # Delivery options
-#         delivery_options = ProductDeliveryOption.objects.filter(product=product)
-#         default_option = delivery_options.filter(default=True).first()
-
-#         # Viewed Products Logic
-#         viewed_products = request.COOKIES.get('viewed_product', '[]')
-#         viewed_products = json.loads(viewed_products)
-#         timestamp = datetime.now().isoformat()
-#         viewed_product = {'id': id, 'timestamp': timestamp}
-        
-#         for vp in viewed_products:
-#             if vp["id"] == id:
-#                 vp["timestamp"] = timestamp
-#                 break
-#         else:
-#             viewed_products.append(viewed_product)
-
-#         if len(viewed_products) > 10:
-#             viewed_products = viewed_products[-10:]
-
-#         session_key = f"viewed_{product.id}"
-#         if not request.session.get(session_key):
-#             try:
-#                 product = Product.objects.get(id=product.id)
-#                 product.views += 1
-#                 product.save()
-#                 request.session[session_key] = True
-#                 return Response({"message": "View count updated", "views": product.views}, status=status.HTTP_200_OK)
-#             except Product.DoesNotExist:
-#                 return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-#         # Variants and related data
-#         variant_data = {}
-#         if product.variant != "None":
-#             variant_id = request.GET.get('variantid', None)
-#             if variant_id:
-#                 variant = Variants.objects.get(id=variant_id)
-#             else:
-#                 variant = Variants.objects.filter(product_id=id).first()
-
-#             variant_images = VariantImage.objects.filter(variant=variant)
-#             colors = Variants.objects.filter(product_id=id, size_id=variant.size_id)
-#             sizes = Variants.objects.raw('SELECT * FROM product_variants WHERE product_id=%s GROUP BY size_id', [id])
-
-#             variant_data = {
-#                 'variant': VariantSerializer(variant).data,
-#                 'variant_images': VariantImageSerializer(variant_images, many=True).data,
-#                 'colors': VariantSerializer(colors, many=True).data,
-#                 'sizes': VariantSerializer(sizes, many=True).data,
-#             }
-
-#         # Prepare the response data
-#         response_data = {
-#             "product": ProductSerializer(product).data,
-#             "p_image": p_image_data,
-#             "related_products": ProductSerializer(products, many=True).data,
-#             "vendor_products": ProductSerializer(vendor_products, many=True).data,
-#             "reviews": ProductReviewSerializer(reviews, many=True).data,
-#             'average_rating': product.average_rating or 0,
-#             'review_count': product.review_count or 0,
-#             "variant_data": variant_data,
-#             'is_following': is_following,
-#             "delivery_options": ProductDeliveryOptionSerializer(delivery_options, many=True).data,
-#         }
-
-#         response = Response(response_data, status=status.HTTP_200_OK)
-#         response.set_cookie('viewed_product', json.dumps(viewed_products), max_age=365*24*60*60)
-#         return response
-
-class ProductDetailAPIView(APIView):
-    serializer_class = ProductSerializer
-
-    def get(self, request, slug, id, sub_category_slug):
-
-        product = get_object_or_404(
-            Product.objects.annotate(
-                average_rating=Avg('reviews__rating'),
-                review_count=Count('reviews')
-            ),
-            slug=slug,
-            status='published',
-            sub_category__slug=sub_category_slug
-        )
-        # Define a unique cache key for the product details
-        cache_key = f"product_detail_{slug}_{id}"
-        cache_timeout = 60 * 15  # Cache timeout in seconds (15 minutes)
-
-        recently_viewed = request.session.get('recently_viewed', [])
-        # Remove the product if it exists already (to avoid duplicates)
-        if id in recently_viewed:
-            recently_viewed.remove(id)
-        # Add the product ID to the start of the list
-        recently_viewed.insert(0, id)
-        # Keep the list to a max of 10 items
-        recently_viewed = recently_viewed[:10]
-        # Save back to session
-        request.session['recently_viewed'] = recently_viewed
-        # Try to retrieve cached data
-        # cached_data = cache.get(cache_key)
-        # if cached_data:
-        #     return Response(cached_data, status=status.HTTP_200_OK)
-
-        # If not cached, proceed to fetch data
-
-        # Retrieve the last view time from session or cookie
-        session_key = f"last_view_{product.id}"
-        last_view_time = request.session.get(session_key, None)
-
-        # product = get_object_or_404(Product, id=id)        
-
-        # Only increment views if the user hasn't viewed this product recently (e.g., within the last 1 hour)
-        now = datetime.now()
-        if not last_view_time or (now - datetime.fromisoformat(last_view_time)) > timedelta(hours=24):
-            # Increment the product views count
-            product.views += 1
-            product.save()
-
-            # Update the session with the current time
-            request.session[session_key] = now.isoformat()
-
-        # Check if the user follows the vendor
-        is_following = (
-            request.user.is_authenticated and
-            product.vendor.followers.filter(id=request.user.id).exists()
-        )
-
-        p_images = ProductImageSerializer(product.p_images.all(), many=True, context={'request': request}).data
-
-        # Get related products
-        products = Product.objects.filter(sub_category=product.sub_category, status="published").exclude(slug=slug).order_by('-date')[:10]
-        vendor_products = Product.objects.filter(vendor=product.vendor, status="published").exclude(slug=slug).order_by('-date')[:10]
-
-        # Reviews and Ratings
-        reviews = ProductReview.objects.filter(product=product, status=True).order_by("-date")
-
-        # Delivery options
-        delivery_options = ProductDeliveryOption.objects.filter(product=product)
-
-        # Variants and related data
-        variant_data = {}
-        if product.variant != "None":
-            variant_id = request.GET.get('variantid', None)
-            if variant_id:
-                variant = Variants.objects.get(id=variant_id)
-            else:
-                variant = Variants.objects.filter(product_id=id).first()
-
-            variant_images = VariantImage.objects.filter(variant=variant)
-            colors = Variants.objects.filter(product_id=id, size_id=variant.size_id)
-            sizes = Variants.objects.raw('SELECT * FROM product_variants WHERE product_id=%s GROUP BY size_id', [id])
-
-            variant_data = {
-                'variant': VariantSerializer(variant).data,
-                'variant_images': VariantImageSerializer(variant_images, many=True ).data,
-                'colors': VariantSerializer(colors, many=True).data,
-                'sizes': VariantSerializer(sizes, many=True).data,
-            }
-
-        # Prepare the response data
-        response_data = {
-            "product": ProductSerializer(product).data,
-            "p_image": p_images,
-            "related_products": ProductSerializer(products).data,
-            "vendor_products": ProductSerializer(vendor_products, many=True).data,
-            "reviews": ProductReviewSerializer(reviews, many=True,).data,
-            'average_rating': product.average_rating or 0,
-            'review_count': product.review_count or 0,
-            "variant_data": variant_data,
-            'is_following': is_following,
-            "delivery_options": ProductDeliveryOptionSerializer(delivery_options, many=True).data,
-        }
-
-        # Cache the response data
-        cache.set(cache_key, response_data, timeout=cache_timeout)
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-
-
-class AjaxColorAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        size_id = request.data.get('size')
-        product_id = request.data.get('productid')
-        
-        # Fetch the product by ID
-        product = get_object_or_404(Product, id=product_id)
-        
-        # Fetch variants based on product ID and size ID
-        colors = Variants.objects.filter(product_id=product_id, size_id=size_id)
-
-        # Serialize the product and variants data
-        product_data = ProductSerializer(product).data
-        colors_data = VariantSerializer(colors, many=True).data
-        
-        # Prepare the response data
-        response_data = {
-            'product': product_data,
-            'colors': colors_data
-        }
-        
-        # Return the JSON response
-        return Response(response_data, status=status.HTTP_200_OK)
-        
     
 def get_or_create_cart(user, request):
     if user.is_authenticated:
